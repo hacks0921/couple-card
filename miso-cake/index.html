@@ -21,7 +21,9 @@
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
     touch-action:none;-webkit-user-select:none;user-select:none;
   }
-  #app{position:fixed;inset:0;overflow:hidden}
+  #app{position:fixed;inset:0;display:flex;justify-content:center;background:#f8eef1}
+  #stage{position:relative;width:100%;max-width:520px;height:100%;overflow:hidden;background:#ffeef4;
+    box-shadow:0 0 70px rgba(190,120,145,.18)}
   #game{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
 
   /* ---------- HUD ---------- */
@@ -223,6 +225,7 @@
 </head>
 <body data-state="title">
 <div id="app">
+ <div id="stage">
   <canvas id="game" aria-label="미소의 초코 케이크 게임 화면"></canvas>
 
   <div id="hud" aria-hidden="true">
@@ -286,6 +289,7 @@
   </div>
 
   <div id="toast" role="status" aria-live="polite"></div>
+ </div>
 </div>
 
 <script>
