@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>누구 카드 쓸까? | 맞벌이 연말정산 카드 몰아주기 계산기</title>
+<meta name="description" content="맞벌이 부부 연말정산 카드 몰아주기 계산기. 총급여와 카드 사용액만 넣으면 10초 만에 어느 카드로 몰아야 하는지 알려드려요.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="누구 카드 쓸까? — 맞벌이 카드 몰아주기">
+<meta property="og:description" content="총급여와 카드값만 넣으면 10초 만에 '누구 카드로 얼마 더 쓸지' 결론이 나와요.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='26' fill='%230e9f6e'/%3E%3Ctext x='50' y='70' font-size='54' font-family='sans-serif' font-weight='bold' text-anchor='middle' fill='white'%3E%E2%82%A9%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
+  html,body{margin:0;padding:0}
+  body{
+    background:#f2f4f6;color:#191f28;
+    font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    font-size:15px;line-height:1.5;letter-spacing:-0.01em;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .shell{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;padding:26px 18px 44px}
+  @media(min-width:520px){
+    body{padding:28px 16px 48px}
+    .shell{border-radius:28px;box-shadow:0 12px 44px rgba(16,24,40,.07);min-height:0}
+  }
+  button{font-family:inherit;cursor:pointer}
+
+  /* ---------- header ---------- */
+  .top{padding:4px 2px 16px}
+  .kicker{display:inline-block;margin:0 0 9px;font-size:11.5px;font-weight:700;letter-spacing:.01em;color:#0e9f6e;background:#e9f8f2;padding:5px 9px;border-radius:999px}
+  h1{margin:0;font-size:27px;line-height:1.22;font-weight:800;letter-spacing:-.04em}
+  .lead{margin:7px 0 0;font-size:13.5px;color:#8b95a1;font-weight:500}
+
+  /* ---------- presets ---------- */
+  .presets{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 4px;margin:0 -2px 4px;scrollbar-width:none}
+  .presets::-webkit-scrollbar{display:none}
+  .chip{
+    flex:0 0 auto;border:1px solid #e5e9ee;background:#fff;color:#4e5968;
+    font-size:12.5px;font-weight:700;padding:8px 11px;border-radius:999px;white-space:nowrap;
+    transition:background .15s,border-color .15s,transform .1s;
+  }
+  .chip:active{transform:scale(.97)}
+  .chip[aria-pressed="true"]{background:#eef4ff;border-color:#c9dcff;color:#1b64da}
+  .sample-hint{margin:2px 2px 0;font-size:11.5px;color:#a1abb8;font-weight:500}
+
+  /* ---------- banner ---------- */
+  .banner{margin:12px 0 0;padding:13px 14px;border-radius:16px;background:#eef4ff;border:1px solid #dbe8ff}
+  .banner b{display:block;font-size:13px;color:#1b64da;letter-spacing:-.02em}
+  .banner p{margin:3px 0 0;font-size:12px;line-height:1.55;color:#4e5968}
+  .banner .linkbtn{margin-top:8px;border:0;background:transparent;padding:0;font-size:12px;font-weight:700;color:#1b64da;text-decoration:underline;text-underline-offset:2px}
+
+  /* ---------- verdict hero ---------- */
+  .verdict{
+    position:relative;overflow:hidden;margin-top:12px;border-radius:24px;padding:20px 18px 18px;
+    color:var(--fg);background:linear-gradient(152deg,var(--bg1) 0%,var(--bg2) 100%);
+    box-shadow:0 16px 34px -18px rgba(9,30,66,.55);
+    --bg1:#0a9d6c;--bg2:#19bd86;--fg:#fff;--sub:rgba(255,255,255,.87);
+    --tint:rgba(255,255,255,.17);--card:rgba(255,255,255,.13);
+    --btn-bg:#fff;--btn-fg:#0a7f59;--mark:rgba(255,255,255,.24);--accent:#fff;
+  }
+  .verdict::after{content:"";position:absolute;right:-70px;top:-90px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.09);pointer-events:none}
+  .verdict[data-tone="blue"]{--bg1:#2563eb;--bg2:#4189f9;--btn-fg:#1b56c9}
+  .verdict[data-tone="gray"]{--bg1:#333c47;--bg2:#4d5763;--btn-fg:#2c343d;box-shadow:0 16px 34px -18px rgba(20,26,33,.5)}
+  .verdict[data-tone="amber"]{--bg1:#a9660a;--bg2:#d99120;--btn-fg:#8c5306}
+  .verdict[data-tone="muted"]{
+    --bg1:#f6f8fa;--bg2:#eef2f6;--fg:#191f28;--sub:#5c6876;--tint:rgba(25,31,40,.06);
+    --card:#fff;--btn-bg:#191f28;--btn-fg:#fff;--mark:rgba(49,130,246,.16);
+    box-shadow:none;border:1px solid #e8edf2;
+  }
+  .verdict[data-tone="muted"]::after{background:rgba(49,130,246,.05)}
+  .v-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:13px}
+  .pill{font-size:11px;font-weight:800;letter-spacing:.02em;padding:5px 9px;border-radius:999px;background:var(--tint)}
+  .pill.ghost{background:transparent;font-weight:600;opacity:.72}
+  .v-title{margin:0 0 7px;font-size:21.5px;line-height:1.42;font-weight:800;letter-spacing:-.045em;word-break:keep-all}
+  .v-title b{font-weight:800;background:var(--mark);border-radius:4px;padding:0 3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .v-reason{margin:0 0 15px;font-size:13px;line-height:1.62;color:var(--sub);font-weight:500;word-break:keep-all}
+  .v-stats{display:flex;gap:8px;margin-bottom:9px}
+  .v-stat{flex:1;min-width:0;background:var(--card);border-radius:14px;padding:10px 11px}
+  .v-stat span{display:block;font-size:10.5px;font-weight:600;opacity:.78;margin-bottom:2px;line-height:1.3}
+  .v-stat strong{display:block;font-size:16.5px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .v-plan{display:flex;gap:8px;align-items:baseline;margin:0 0 11px;background:var(--card);border-radius:12px;padding:9px 11px;font-size:12px;line-height:1.45}
+  .v-plan b{font-weight:800}
+  .v-plan span{opacity:.82}
+  .v-tip{margin:0 0 12px;background:var(--card);border-radius:12px;padding:10px 11px;font-size:12px;line-height:1.55;color:var(--sub);word-break:keep-all}
+  .v-actions{display:flex;gap:8px;margin-top:2px}
+  .v-actions .btn{flex:1;height:43px;border:0;border-radius:13px;font-size:13.5px;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .1s,filter .15s}
+  .v-actions .btn:active{transform:scale(.98)}
+  .btn-primary{background:var(--btn-bg);color:var(--btn-fg)}
+  .btn-ghost{background:var(--tint);color:var(--fg)}
+
+  /* ---------- tip ---------- */
+  .tip{margin:12px 0 0;border:1px solid #e8edf2;border-radius:14px;background:#fafbfc;overflow:hidden}
+  .tip summary{list-style:none;cursor:pointer;display:flex;gap:7px;align-items:flex-start;padding:11px 13px;font-size:12px;line-height:1.5;color:#4e5968;font-weight:600;letter-spacing:-.02em}
+  .tip summary::-webkit-details-marker{display:none}
+  .tip summary .ico{flex:0 0 auto;font-size:12px;line-height:1.5}
+  .tip summary .chev{margin-left:auto;flex:0 0 auto;color:#a1abb8;transition:transform .2s;font-size:10px;line-height:1.8}
+  .tip[open] summary .chev{transform:rotate(180deg)}
+  .tip-body{padding:0 13px 12px;font-size:12px;line-height:1.65;color:#6b7684}
+
+  /* ---------- person card ---------- */
+  .card{margin-top:12px;background:#fff;border:1px solid #e8edf2;border-radius:22px;padding:16px 16px 14px}
+  .p-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+  .p-id{display:flex;align-items:center;gap:9px;min-width:0}
+  .avatar{flex:0 0 auto;width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;background:#3182f6;letter-spacing:-.03em}
+  .card[data-who="b"] .avatar{background:#7c5cff}
+  .p-name{font-size:14.5px;font-weight:800;letter-spacing:-.03em}
+  .p-meta{font-size:11.5px;color:#8b95a1;font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .badge{flex:0 0 auto;font-size:11px;font-weight:800;padding:5px 9px;border-radius:999px;background:#eef1f4;color:#8b95a1;white-space:nowrap;letter-spacing:-.01em}
+  .badge.green{background:#e7f7ef;color:#0a8f63}
+  .badge.amber{background:#fff3e0;color:#b26a08}
+
+  .fields{display:flex;flex-direction:column;gap:2px}
+  .field{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0}
+  .field .lbl{font-size:13px;color:#4e5968;font-weight:600;white-space:nowrap}
+  .inbox{display:flex;align-items:center;gap:4px;height:41px;padding:0 11px;border-radius:12px;background:#f3f5f7;transition:background .15s,box-shadow .15s}
+  .inbox:focus-within{background:#fff;box-shadow:inset 0 0 0 2px #3182f6}
+  .inbox input{border:0;background:transparent;outline:none;width:98px;text-align:right;font-family:inherit;font-size:16px;font-weight:800;letter-spacing:-.02em;color:#191f28;font-variant-numeric:tabular-nums;padding:0}
+  .inbox input::placeholder{color:#b6bec8;font-weight:600}
+  .inbox em{font-style:normal;font-size:11.5px;font-weight:700;color:#a1abb8;white-space:nowrap}
+
+  @media(max-width:359px){
+    .shell{padding-left:15px;padding-right:15px}
+    .field{flex-direction:column;align-items:stretch;gap:5px}
+    .field .lbl{font-size:12.5px}
+    .inbox{width:100%}
+    .inbox input{flex:1;width:auto;min-width:0;text-align:left}
+    .v-title{font-size:20px}
+    .v-actions .btn{font-size:12.5px}
+  }
+
+  .range{-webkit-appearance:none;appearance:none;width:100%;height:24px;margin:3px 0 2px;background:transparent}
+  .range::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:linear-gradient(to right,#3182f6 var(--pct,0%),#e9edf2 var(--pct,0%))}
+  .range::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:#fff;border:2.5px solid #3182f6;box-shadow:0 2px 6px rgba(16,24,40,.16)}
+  .range::-moz-range-track{height:4px;border-radius:99px;background:#e9edf2}
+  .range::-moz-range-progress{height:4px;border-radius:99px;background:#3182f6}
+  .range::-moz-range-thumb{width:16px;height:16px;border:2.5px solid #3182f6;border-radius:50%;background:#fff}
+
+  .gauge{margin-top:11px}
+  .g-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px}
+  .g-row span{font-size:11.5px;font-weight:600;color:#8b95a1}
+  .g-row b{font-size:11.5px;font-weight:800;color:#4e5968;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .track{height:7px;border-radius:99px;background:#eef1f4;overflow:hidden}
+  .fill{display:block;height:100%;width:0;border-radius:99px;background:#3182f6;transition:width .3s cubic-bezier(.22,.8,.3,1)}
+  .fill.green{background:#12b981}
+  .fill.gray{background:#c8d0d9}
+  .g-note{margin-top:5px;font-size:11px;font-weight:600;color:#a1abb8}
+  .g-note.warn{color:#c07a12}
+  .g-note.ok{color:#0a8f63}
+
+  .next{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:10px 12px;border-radius:13px;background:#f7f9fb}
+  .next span{font-size:12px;font-weight:600;color:#5c6876}
+  .next strong{font-size:14.5px;font-weight:800;color:#0a8f63;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .next.zero{background:#f7f8fa}
+  .next.zero strong{color:#a1abb8}
+
+  /* ---------- plan panel ---------- */
+  .panel{margin-top:12px;border:1px solid #e8edf2;border-radius:22px;background:#fff;overflow:hidden}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;background:#fff;padding:15px 16px;font-size:14px;font-weight:800;color:#191f28;letter-spacing:-.03em}
+  .panel-head .sub{font-size:11.5px;font-weight:600;color:#a1abb8;letter-spacing:0}
+  .panel-head .chev{font-size:10px;color:#a1abb8;transition:transform .2s}
+  .panel.open .panel-head .chev{transform:rotate(180deg)}
+  .panel-body{display:none;padding:0 16px 16px;border-top:1px solid #f2f4f6}
+  .panel.open .panel-body{display:block}
+  .panel-body .hint{margin:12px 0 10px;font-size:12px;line-height:1.55;color:#8b95a1}
+  .plan-chips{display:flex;gap:6px;margin:10px 0 4px;flex-wrap:wrap}
+  .plan-chips .chip{padding:7px 11px;font-size:12px}
+  .p-row{display:flex;align-items:center;gap:8px;margin-top:7px;padding:11px 12px;border-radius:13px;background:#f7f9fb;font-size:12.5px}
+  .p-row.best{background:#eaf8f1;box-shadow:inset 0 0 0 1px #b9e7d3}
+  .p-row .who{flex:1;font-weight:700;color:#191f28;letter-spacing:-.02em}
+  .p-row .gain{font-weight:800;color:#0a8f63;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .p-row.zero .gain{color:#a1abb8}
+  .p-row .mark{font-size:10px;font-weight:800;color:#0a8f63;background:#d3f2e4;border-radius:999px;padding:3px 7px;white-space:nowrap}
+  .p-note{margin:10px 0 0;font-size:11.5px;line-height:1.5;color:#a1abb8}
+  .plan-empty{margin:10px 0 4px;font-size:12px;color:#a1abb8}
+
+  /* ---------- handoff ---------- */
+  .handoff{margin-top:12px;padding:16px;border-radius:22px;border:1px solid #e3edff;background:linear-gradient(180deg,#f1f6ff 0%,#fbfcff 100%)}
+  .handoff b{display:block;font-size:13.5px;font-weight:800;color:#1b4fa8;letter-spacing:-.03em}
+  .handoff p{margin:4px 0 11px;font-size:12px;line-height:1.55;color:#5c6876}
+  .btn-dark{width:100%;height:45px;border:0;border-radius:13px;background:#191f28;color:#fff;font-size:13.5px;font-weight:800;letter-spacing:-.02em;transition:transform .1s}
+  .btn-dark:active{transform:scale(.985)}
+  .btn-outline{width:100%;height:45px;border:1px solid #cfdcf2;border-radius:13px;background:#fff;color:#1b4fa8;font-size:13.5px;font-weight:800;letter-spacing:-.02em}
+  .handoff .file-note{margin:9px 0 0;font-size:11px;line-height:1.5;color:#a1abb8}
+
+  /* ---------- comments ---------- */
+  .cmt{margin-top:26px;padding-top:22px;border-top:1px solid #eef1f4}
+  .cmt-head{display:flex;align-items:center;gap:7px}
+  .cmt-head h2{margin:0;font-size:16px;font-weight:800;letter-spacing:-.04em}
+  .cmt-count{font-size:11px;font-weight:800;color:#0e9f6e;background:#e9f8f2;padding:2px 7px;border-radius:999px}
+  .cmt-sub{margin:5px 0 12px;font-size:12px;color:#8b95a1}
+  .cmt-form textarea{width:100%;min-height:64px;resize:none;border:1px solid #e8edf2;background:#fafbfc;border-radius:14px;padding:11px 12px;font-family:inherit;font-size:13.5px;line-height:1.5;color:#191f28;outline:none;transition:background .15s,box-shadow .15s}
+  .cmt-form textarea:focus{background:#fff;box-shadow:inset 0 0 0 2px #0e9f6e;border-color:transparent}
+  .cmt-row{display:flex;gap:7px;margin-top:7px}
+  .cmt-row input{flex:1;min-width:0;height:42px;border:1px solid #e8edf2;background:#fafbfc;border-radius:12px;padding:0 12px;font-family:inherit;font-size:13px;color:#191f28;outline:none}
+  .cmt-row input:focus{background:#fff;box-shadow:inset 0 0 0 2px #0e9f6e;border-color:transparent}
+  .cmt-row button{flex:0 0 auto;width:88px;height:42px;border:0;border-radius:12px;background:#0e9f6e;color:#fff;font-size:13px;font-weight:800}
+  .cmt-list{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .cmt-item{background:#f7f9fb;border-radius:14px;padding:11px 12px}
+  .cmt-item .c-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+  .cmt-item .c-name{font-size:11.5px;font-weight:800;color:#4e5968}
+  .cmt-item .c-tag{font-size:10px;font-weight:800;color:#a1abb8;background:#eef1f4;border-radius:999px;padding:2px 6px}
+  .cmt-item .c-time{font-size:10.5px;color:#b6bec8;margin-left:auto}
+  .cmt-item p{margin:0;font-size:12.5px;line-height:1.55;color:#333d4b;word-break:break-word}
+  .cmt-empty{margin:12px 0 0;font-size:12px;color:#a1abb8}
+
+  /* ---------- footer ---------- */
+  .foot{margin-top:26px;padding-top:16px;border-top:1px solid #eef1f4}
+  .foot details{border:0}
+  .foot summary{list-style:none;cursor:pointer;font-size:12px;font-weight:700;color:#8b95a1;display:flex;justify-content:space-between;align-items:center}
+  .foot summary::-webkit-details-marker{display:none}
+  .foot summary::after{content:"▾";font-size:10px;transition:transform .2s}
+  .foot details[open] summary::after{transform:rotate(180deg)}
+  .foot ul{margin:10px 0 0;padding:0 0 0 15px;font-size:11.5px;line-height:1.75;color:#8b95a1}
+  .foot li{margin:0}
+  .tiny{margin:12px 0 0;font-size:11px;line-height:1.6;color:#b6bec8}
+
+  /* ---------- toast ---------- */
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+    max-width:min(420px,calc(100vw - 40px));
+    background:rgba(25,31,40,.94);color:#fff;font-size:12.5px;font-weight:600;line-height:1.45;
+    padding:11px 15px;border-radius:14px;box-shadow:0 10px 26px rgba(0,0,0,.22);
+    opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:50;text-align:center;
+  }
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<main>
+
+  <header class="top">
+    <p class="kicker">2026 귀속 · 연말정산</p>
+    <h1>누구 카드 쓸까?</h1>
+    <p class="lead">맞벌이 부부 카드 몰아주기 · 10초면 결론</p>
+  </header>
+
+  <div class="presets" role="group" aria-label="예시 불러오기">
+    <button type="button" class="chip" data-preset="one">① 8천/5천</button>
+    <button type="button" class="chip" data-preset="two">② 5천/7.2천</button>
+    <button type="button" class="chip" data-preset="three">③ 둘 다 꽉</button>
+  </div>
+  <p class="sample-hint" id="sampleHint">예시 숫자로 채워져 있어요. 내 숫자로 바꿔보세요.</p>
+
+  <div class="banner" id="banner" hidden>
+    <b>링크로 받은 숫자가 채워져 있어요</b>
+    <p id="bannerText">빈 칸만 채우면 우리 집 결론이 바로 나와요.</p>
+    <button type="button" class="linkbtn" id="bannerReset">내 숫자로 새로 시작</button>
+  </div>
+
+  <section class="verdict" id="verdict" data-tone="muted">
+    <div class="v-top">
+      <span class="pill" id="vPill">지금 결론</span>
+      <span class="pill ghost">2026 귀속 기준</span>
+    </div>
+    <h2 class="v-title" id="vTitle"></h2>
+    <p class="v-reason" id="vReason"></p>
+    <div class="v-stats" id="vStats"></div>
+    <div class="v-plan" id="vPlan" hidden></div>
+    <p class="v-tip" id="vTip" hidden></p>
+    <div class="v-actions">
+      <button type="button" class="btn btn-primary" id="btnCopy">결과 복사</button>
+      <button type="button" class="btn btn-ghost" id="btnPng">이미지 저장</button>
+    </div>
+  </section>
+
+  <details class="tip">
+    <summary>
+      <span class="ico">💡</span>
+      <span>홈택스 연말정산 미리보기에서 ‘신용카드’·‘직불/현금영수증’ 2칸 숫자만 그대로 넣으면 끝!</span>
+      <i class="chev">▾</i>
+    </summary>
+    <div class="tip-body">
+      홈택스 → My홈택스 → <b>연말정산 미리보기</b>를 열면 ‘카드·현금영수증’ 사용액이 나와요.
+      신용카드 줄, 직불·현금영수증 줄 — 두 숫자만 그대로 옮겨 적으면 됩니다. (앱에 저장되는 건 없어요.)
+    </div>
+  </details>
+
+  <article class="card" id="cardA" data-who="a">
+    <div class="p-head">
+      <div class="p-id">
+        <span class="avatar">나</span>
+        <div style="min-width:0">
+          <div class="p-name">나</div>
+          <div class="p-meta" id="a-meta">총급여를 넣어주세요</div>
+        </div>
+      </div>
+      <span class="badge" id="a-badge">미입력</span>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <span class="lbl">총급여</span>
+        <div class="inbox"><input id="a-sal" type="text" inputmode="numeric" placeholder="0" aria-label="나의 총급여"><em>만원</em></div>
+      </div>
+      <input class="range" id="a-sal-r" type="range" min="0" max="20000" step="100" value="0" aria-label="나의 총급여 슬라이더">
+      <div class="field">
+        <span class="lbl">올해 쓴 신용카드</span>
+        <div class="inbox"><input id="a-cred" type="text" inputmode="numeric" placeholder="0" aria-label="나의 신용카드 사용액"><em>만원</em></div>
+      </div>
+      <div class="field">
+        <span class="lbl">체크카드 · 현금영수증</span>
+        <div class="inbox"><input id="a-deb" type="text" inputmode="numeric" placeholder="0" aria-label="나의 체크카드와 현금영수증 사용액"><em>만원</em></div>
+      </div>
+    </div>
+
+    <div class="gauge">
+      <div class="g-row"><span>25% 문턱</span><b id="a-thrTxt">0 / 0만원</b></div>
+      <div class="track"><i class="fill" id="a-thrBar"></i></div>
+      <div class="g-note" id="a-thrNote">총급여를 넣어주세요</div>
+    </div>
+    <div class="gauge">
+      <div class="g-row"><span>카드 공제</span><b id="a-ddTxt">0 / 0만원</b></div>
+      <div class="track"><i class="fill green" id="a-ddBar"></i></div>
+      <div class="g-note" id="a-ddNote">남은 한도 0원</div>
+    </div>
+    <div class="next" id="a-next">
+      <span>체크카드 100만원 더 쓰면</span>
+      <strong id="a-nextVal">0원</strong>
+    </div>
+  </article>
+
+  <article class="card" id="cardB" data-who="b">
+    <div class="p-head">
+      <div class="p-id">
+        <span class="avatar">배</span>
+        <div style="min-width:0">
+          <div class="p-name">배우자</div>
+          <div class="p-meta" id="b-meta">총급여를 넣어주세요</div>
+        </div>
+      </div>
+      <span class="badge" id="b-badge">미입력</span>
+    </div>
+
+    <div class="fields">
+      <div class="field">
+        <span class="lbl">총급여</span>
+        <div class="inbox"><input id="b-sal" type="text" inputmode="numeric" placeholder="0" aria-label="배우자의 총급여"><em>만원</em></div>
+      </div>
+      <input class="range" id="b-sal-r" type="range" min="0" max="20000" step="100" value="0" aria-label="배우자의 총급여 슬라이더">
+      <div class="field">
+        <span class="lbl">올해 쓴 신용카드</span>
+        <div class="inbox"><input id="b-cred" type="text" inputmode="numeric" placeholder="0" aria-label="배우자의 신용카드 사용액"><em>만원</em></div>
+      </div>
+      <div class="field">
+        <span class="lbl">체크카드 · 현금영수증</span>
+        <div class="inbox"><input id="b-deb" type="text" inputmode="numeric" placeholder="0" aria-label="배우자의 체크카드와 현금영수증 사용액"><em>만원</em></div>
+      </div>
+    </div>
+
+    <div class="gauge">
+      <div class="g-row"><span>25% 문턱</span><b id="b-thrTxt">0 / 0만원</b></div>
+      <div class="track"><i class="fill" id="b-thrBar"></i></div>
+      <div class="g-note" id="b-thrNote">총급여를 넣어주세요</div>
+    </div>
+    <div class="gauge">
+      <div class="g-row"><span>카드 공제</span><b id="b-ddTxt">0 / 0만원</b></div>
+      <div class="track"><i class="fill green" id="b-ddBar"></i></div>
+      <div class="g-note" id="b-ddNote">남은 한도 0원</div>
+    </div>
+    <div class="next" id="b-next">
+      <span>체크카드 100만원 더 쓰면</span>
+      <strong id="b-nextVal">0원</strong>
+    </div>
+  </article>
+
+  <section class="panel" id="planPanel">
+    <button type="button" class="panel-head" id="planToggle" aria-expanded="false">
+      <span>연말까지 쓸 돈이 남았다면 <span class="sub">· 12월 카드값</span></span>
+      <i class="chev">▾</i>
+    </button>
+    <div class="panel-body">
+      <p class="hint">앞으로 카드로 더 쓸 금액을 넣으면, 어디에 몰아야 하는지 계산해 드려요.</p>
+      <div class="field">
+        <span class="lbl">연말까지 쓸 금액</span>
+        <div class="inbox"><input id="plan" type="text" inputmode="numeric" placeholder="0" aria-label="연말까지 쓸 금액"><em>만원</em></div>
+      </div>
+      <div class="plan-chips">
+        <button type="button" class="chip" data-plan="100">100만</button>
+        <button type="button" class="chip" data-plan="200">200만</button>
+        <button type="button" class="chip" data-plan="300">300만</button>
+        <button type="button" class="chip" data-plan="500">500만</button>
+      </div>
+      <div id="planResult"></div>
+    </div>
+  </section>
+
+  <section class="handoff">
+    <b>배우자 몫은 아직 비어 있죠?</b>
+    <p>내 숫자가 채워진 링크를 보내면, 배우자는 자기 칸만 채우면 끝나요.</p>
+    <button type="button" class="btn-outline" id="btnHandoff">배우자에게 내 입력값 링크 보내기</button>
+    <p class="file-note" id="fileNote" hidden>지금은 파일로 열려 있어 링크 공유는 배포 후에 동작해요.</p>
+  </section>
+
+  <section class="cmt" aria-labelledby="cmtTitle">
+    <div class="cmt-head">
+      <h2 id="cmtTitle">한 줄 의견</h2>
+      <span class="cmt-count" id="cmtCount">0</span>
+    </div>
+    <p class="cmt-sub">로그인 없이 바로 남길 수 있어요. 다음 버전에 반영할게요.</p>
+    <form class="cmt-form" id="cmtForm">
+      <textarea id="cmtText" maxlength="140" rows="2" placeholder="예: 카드 실적 구간도 알려주세요"></textarea>
+      <div class="cmt-row">
+        <input id="cmtName" maxlength="10" placeholder="닉네임 (선택)">
+        <button type="submit">남기기</button>
+      </div>
+    </form>
+    <ul class="cmt-list" id="cmtList"></ul>
+  </section>
+
+  <footer class="foot">
+    <details>
+      <summary>계산 기준 보기</summary>
+      <ul>
+        <li>총급여의 25%를 넘는 사용액부터 공제 — 신용카드 15%, 체크카드·현금영수증 30%</li>
+        <li>신용카드 사용액이 25% 문턱을 먼저 채우고, 남는 문턱은 체크카드가 채우는 순서로 계산</li>
+        <li>공제 한도: 총급여 7,000만원 이하 300만원 / 초과 250만원</li>
+        <li>세율: 총급여에서 근로소득공제·인적공제(150만원)·4대보험(9%)을 뺀 추정 과세표준 기준 (6.6~41.8%)</li>
+        <li>전통시장·대중교통·문화비 추가 공제는 반영하지 않았어요</li>
+      </ul>
+    </details>
+    <p class="tiny">참고용 계산이에요. 실제 환급액은 부양가족·다른 공제·납부한 세금에 따라 달라질 수 있어요.</p>
+  </footer>
+
+</main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ==================================================================
+     계산 엔진 (순수 함수 · DOM 없음 · 단위: 만원)
+     ================================================================== -->
+<script id="calc-engine">
+var Calc = (function () {
+  'use strict';
+
+  var BRACKETS = [
+    [1400, 6.6], [5000, 16.5], [8800, 26.4], [15000, 38.5], [Infinity, 41.8]
+  ];
+
+  function comma(n) {
+    var neg = n < 0;
+    var s = String(Math.abs(n));
+    var parts = s.split('.');
+    var head = parts[0], out = '', c = 0;
+    for (var i = head.length - 1; i >= 0; i--) {
+      out = head.charAt(i) + out;
+      c++;
+      if (c % 3 === 0 && i > 0) out = ',' + out;
+    }
+    return (neg ? '-' : '') + (parts.length > 1 ? out + '.' + parts[1] : out);
+  }
+
+  // 만원 단위 숫자를 사람이 읽는 금액으로
+  function wan(v) {
+    v = Number(v) || 0;
+    if (Math.abs(v) === 0) return '0원';
+    if (Math.abs(v) < 1) return comma(Math.round(v * 10000)) + '원';
+    if (Math.abs(v) < 10) return comma(Math.round(v * 100) / 100) + '만원';
+    if (Math.abs(v) < 100) return comma(Math.round(v * 10) / 10) + '만원';
+    return comma(Math.round(v)) + '만원';
+  }
+
+  // 근로소득공제 (2026 귀속, 만원)
+  function laborDeduction(g) {
+    if (g <= 500) return g * 0.7;
+    if (g <= 1500) return 350 + (g - 500) * 0.4;
+    if (g <= 4500) return 750 + (g - 1500) * 0.15;
+    if (g <= 10000) return 1200 + (g - 4500) * 0.05;
+    return Math.min(2000, 1475 + (g - 10000) * 0.02);
+  }
+
+  // 아주 거친 과세표준 추정: 총급여 - 근로소득공제 - 인적공제 150 - 4대보험 9%
+  function taxableOf(g) {
+    if (g <= 0) return 0;
+    return Math.max(0, g - laborDeduction(g) - 150 - g * 0.09);
+  }
+
+  function rateOf(g) {
+    var t = taxableOf(g);
+    for (var i = 0; i < BRACKETS.length; i++) {
+      if (t <= BRACKETS[i][0]) return BRACKETS[i][1];
+    }
+    return 41.8;
+  }
+
+  function capOf(g) { return g <= 7000 ? 300 : 250; }
+
+  // 카드 공제 기본 계산 (신용카드가 25% 문턱을 먼저 채운다)
+  function baseOf(g, credit, debit) {
+    var threshold = g * 0.25;
+    var total = credit + debit;
+    var creditAbove = 0, debitAbove = 0;
+    if (total > threshold) {
+      if (credit >= threshold) {
+        creditAbove = credit - threshold;
+        debitAbove = debit;
+      } else {
+        creditAbove = 0;
+        debitAbove = total - threshold;
+      }
+    }
+    var cap = capOf(g);
+    var raw = creditAbove * 0.15 + debitAbove * 0.30;
+    var ded = Math.min(raw, cap);
+    return {
+      threshold: threshold,
+      total: total,
+      gap: Math.max(0, threshold - total),
+      over: Math.max(0, total - threshold),
+      creditAbove: creditAbove,
+      debitAbove: debitAbove,
+      raw: raw,
+      cap: cap,
+      ded: ded,
+      room: Math.max(0, cap - ded)
+    };
+  }
+
+  function spouse(input) {
+    input = input || {};
+    var g = Math.max(0, Number(input.sal) || 0);
+    var credit = Math.max(0, Number(input.cred) || 0);
+    var debit = Math.max(0, Number(input.deb) || 0);
+    var b = baseOf(g, credit, debit);
+    var rate = g > 0 ? rateOf(g) : 0;
+    var saving = b.ded * rate / 100;
+    var plus = baseOf(g, credit, debit + 100);
+    var per100 = (plus.ded - b.ded) * rate / 100;
+    var needToCap = b.room > 0 ? b.gap + b.room / 0.3 : 0;
+    return {
+      gross: g, credit: credit, debit: debit,
+      hasIncome: g > 0,
+      rate: rate,
+      taxable: taxableOf(g),
+      threshold: b.threshold, total: b.total,
+      gap: b.gap, over: b.over,
+      cap: b.cap, ded: b.ded, room: b.room, raw: b.raw,
+      saving: saving,
+      per100: per100,                       // 체크카드 100만원 더 쓸 때 절세액
+      per100After: rate * 0.3,              // 문턱을 넘은 뒤 100만원당 절세액
+      needToCap: needToCap,                 // 한도를 채우는 데 필요한 추가 사용액
+      ableSaving: b.room * rate / 100       // 남은 한도로 더 받을 수 있는 절세액
+    };
+  }
+
+  function delta(s, p) {
+    if (!(p > 0) || !s.hasIncome) return 0;
+    var b = baseOf(s.gross, s.credit, s.debit + p);
+    return (b.ded - s.ded) * s.rate / 100;
+  }
+
+  function points(s, P) {
+    var arr = [0];
+    if (s.hasIncome && s.room > 0) {
+      if (s.gap > 0) arr.push(s.gap);
+      arr.push(s.gap + s.room / 0.3);
+    }
+    arr.push(P);
+    return arr.map(function (v) { return Math.min(P, Math.max(0, v)); });
+  }
+
+  // 앞으로 쓸 금액 P를 두 사람에게 어떻게 나누면 가장 많이 돌려받는지
+  function planSplit(A, B, P) {
+    P = Math.max(0, Number(P) || 0);
+    if (P <= 0) return { a: 0, b: 0, saving: 0 };
+    var xs = [];
+    var pa = points(A, P), pb = points(B, P);
+    for (var i = 0; i < pa.length; i++) xs.push(pa[i]);
+    for (var j = 0; j < pb.length; j++) xs.push(P - pb[j]);
+    xs.push(P);
+    var best = { a: 0, b: 0, saving: 0 };
+    var soloA = { a: P, b: 0, saving: delta(A, P) };
+    var soloB = { a: 0, b: P, saving: delta(B, P) };
+    if (soloA.saving > best.saving) best = soloA;
+    if (soloB.saving > best.saving) best = soloB;
+    for (var k = 0; k < xs.length; k++) {
+      var x = Math.min(P, Math.max(0, xs[k]));
+      var y = P - x;
+      var v = delta(A, x) + delta(B, y);
+      if (v > best.saving + 1e-9) best = { a: x, b: y, saving: v };
+    }
+    best.saving = Math.round(best.saving * 10) / 10;
+    best.a = Math.round(best.a * 10) / 10;
+    best.b = Math.round(best.b * 10) / 10;
+    return best;
+  }
+
+  function nameOf(k) { return k === 'a' ? '나' : '배우자'; }
+
+  // 메인: 화면에 그대로 쓸 수 있는 결론 데이터
+  function verdict(aInp, bInp, planWan) {
+    var A = spouse(aInp), B = spouse(bInp);
+    var out = {
+      A: A, B: B,
+      tone: 'muted',
+      title: '', titleHtml: '',
+      reason: '', stats: [], tip: '', planLine: '',
+      winner: null,
+      png: { accent: '#191f28', soft: '#f2f4f6', headline: '', sub: '' },
+      totalDed: A.ded + B.ded,
+      totalSaving: A.saving + B.saving,
+      split: null
+    };
+
+    // 1. 아직 입력이 덜 된 상태
+    if (!A.hasIncome || !B.hasIncome) {
+      out.tone = 'muted';
+      if (!A.hasIncome && !B.hasIncome) {
+        out.title = '총급여 2개만 넣으면 끝나요';
+        out.reason = '나와 배우자의 총급여만 있으면, 지금 누구 카드로 몰아야 하는지 바로 알려드려요.';
+        out.png.headline = '총급여만 넣으면 끝';
+        out.png.sub = '10초면 우리 집 카드 전략이 나와요';
+      } else {
+        var who = A.hasIncome ? '배우자' : '나';
+        out.title = who + ' 총급여만 넣으면 끝나요';
+        out.reason = A.hasIncome
+          ? '내 숫자는 들어왔어요. 배우자 총급여만 넣으면 결론이 나와요.'
+          : '배우자 숫자는 들어왔어요. 내 총급여만 넣으면 결론이 나와요.';
+        out.png.headline = who + ' 총급여만 넣으면 끝';
+        out.png.sub = '10초면 우리 집 카드 전략이 나와요';
+      }
+      out.stats = [
+        { label: '지금까지 카드 공제', value: wan(out.totalDed) },
+        { label: '예상 절세', value: wan(out.totalSaving) }
+      ];
+      out.png.accent = '#191f28';
+      out.png.soft = '#f2f4f6';
+      return out;
+    }
+
+    var aRoom = A.room > 0.5, bRoom = B.room > 0.5;
+    var aOver = A.gap <= 0, bOver = B.gap <= 0;
+
+    // 2. 둘 다 한도 소진
+    if (!aRoom && !bRoom) {
+      out.tone = 'gray';
+      out.title = '둘 다 카드 공제 한도 꽉 찼어요';
+      out.reason = '이제 카드로 더 써도 돌려받는 세금은 0원이에요. 두 분 합쳐 ' + wan(out.totalDed) +
+        ' 공제로 약 ' + wan(out.totalSaving) + '을 아꼈어요.';
+      out.tip = '카드 공제는 끝! 이제 연말정산 말고 캐시백·혜택 좋은 카드 쓰거나, 연금저축·IRP 세액공제를 챙기는 게 이득이에요.';
+      out.stats = [
+        { label: '합산 카드 공제', value: wan(out.totalDed) },
+        { label: '예상 절세', value: wan(out.totalSaving) }
+      ];
+      out.png.headline = '둘 다 카드 공제 끝';
+      out.png.sub = '이제는 캐시백·연금저축·IRP 차례';
+      out.png.accent = '#333c47';
+      out.png.soft = '#eef1f4';
+      out.split = planWan > 0 ? buildSplit(A, B, planWan) : null;
+      return out;
+    }
+
+    // 3. 한 사람만 문턱을 넘었고, 그 사람에게 한도가 남음
+    if (aOver !== bOver) {
+      var overKey = aOver ? 'a' : 'b';
+      var overS = aOver ? A : B;
+      var underS = aOver ? B : A;
+      var underKey = aOver ? 'b' : 'a';
+      if (overS.room > 0.5) {
+        out.winner = overKey;
+        out.tone = 'green';
+        out.titleHtml = '지금은 <b>' + nameOf(overKey) + ' 체크카드</b>로 몰아주세요';
+        out.reason = nameOf(overKey) + '는 25% 문턱을 넘어서 100만원당 ' + wan(overS.per100) +
+          '씩 돌려받아요. ' + nameOf(underKey) + '는 문턱까지 ' + wan(underS.gap) +
+          ' 남아서 지금은 0원이에요.';
+        out.tip = '쓸 돈이 ' + wan(underS.gap) + ' 넘게 남아 있다면, 아래 ‘연말까지 쓸 돈’에서 ' +
+          nameOf(underKey) + ' 쪽으로 넘기는 게 나은지도 바로 비교해 보세요.';
+        out.stats = [
+          { label: nameOf(overKey) + ' 카드 100만원당', value: '+' + wan(overS.per100) },
+          { label: '한도까지 ' + wan(overS.needToCap) + ' 쓰면', value: '+' + wan(overS.ableSaving) }
+        ];
+        out.png.headline = nameOf(overKey) + ' 체크카드 몰빵';
+        out.png.sub = nameOf(underKey) + '는 문턱까지 ' + wan(underS.gap) + ' · 지금은 0원';
+        out.png.accent = '#0a8f63';
+        out.png.soft = '#e9f7f1';
+      } else {
+        out.tone = 'amber';
+        out.winner = underKey;
+        out.titleHtml = nameOf(underKey) + ' 카드로 <b>' + wan(underS.gap) + '</b>만 넘기면 시작돼요';
+        out.reason = nameOf(overKey) + '는 한도(' + wan(overS.cap) + ')를 다 채워서 더 써도 0원이에요. ' +
+          nameOf(underKey) + '가 문턱을 넘으면 그때부터 100만원당 ' + wan(underS.per100After) + '씩 돌려받아요.';
+        out.tip = '문턱을 넘기 전까지는 공제가 0원이에요. 어차피 쓸 돈이라면 ' + nameOf(underKey) + ' 카드로 먼저 모아보세요.';
+        out.stats = [
+          { label: nameOf(underKey) + ' 문턱까지', value: wan(underS.gap) },
+          { label: '넘은 뒤 100만원당', value: '+' + wan(underS.per100After) }
+        ];
+        out.png.headline = nameOf(underKey) + ' 카드로 ' + wan(underS.gap) + '만';
+        out.png.sub = '문턱만 넘기면 100만원당 ' + wan(underS.per100After) + '씩';
+        out.png.accent = '#a9660a';
+        out.png.soft = '#fdf3e2';
+      }
+      out.split = planWan > 0 ? buildSplit(A, B, planWan) : null;
+      return out;
+    }
+
+    // 4. 둘 다 문턱 아래
+    if (!aOver && !bOver) {
+      var closerKey = A.gap <= B.gap ? 'a' : 'b';
+      var closer = A.gap <= B.gap ? A : B;
+      out.tone = 'amber';
+      out.winner = closerKey;
+      out.titleHtml = '아직 둘 다 <b>25% 문턱</b> 아래예요';
+      out.reason = nameOf(closerKey) + '가 ' + wan(closer.gap) + '만 더 쓰면 문턱을 넘어요. ' +
+        '넘는 순간부터 체크카드 30% 공제가 시작돼요.';
+      out.tip = '문턱(총급여 25%)을 넘기 전까지는 카드 공제가 0원이에요.';
+      out.stats = [
+        { label: '나 문턱까지', value: A.gap > 0 ? wan(A.gap) : '통과' },
+        { label: '배우자 문턱까지', value: B.gap > 0 ? wan(B.gap) : '통과' }
+      ];
+      out.png.headline = '아직 25% 문턱 아래';
+      out.png.sub = nameOf(closerKey) + '가 ' + wan(closer.gap) + '만 더 쓰면 넘어요';
+      out.png.accent = '#a9660a';
+      out.png.soft = '#fdf3e2';
+      out.split = planWan > 0 ? buildSplit(A, B, planWan) : null;
+      return out;
+    }
+
+    // 5. 둘 다 문턱 위 — 남은 한도 비교
+    if (!aRoom) out.winner = 'b';
+    else if (!bRoom) out.winner = 'a';
+    else if (Math.abs(A.per100 - B.per100) < 0.05) out.winner = null;
+    else out.winner = A.per100 > B.per100 ? 'a' : 'b';
+
+    if (out.winner === null) {
+      out.tone = 'blue';
+      out.title = '둘 중 아무 카드나 괜찮아요';
+      out.reason = '두 분 다 문턱을 넘었고 세율도 비슷해서, 100만원당 약 ' + wan(A.per100) + '씩 똑같이 돌려받아요.';
+      out.tip = '한도가 더 많이 남은 쪽부터 채우면 실수 없이 끝낼 수 있어요.';
+      out.stats = [
+        { label: '나 100만원당', value: '+' + wan(A.per100) },
+        { label: '배우자 100만원당', value: '+' + wan(B.per100) }
+      ];
+      out.png.headline = '둘 다 비슷해요';
+      out.png.sub = '100만원당 약 ' + wan(A.per100) + '씩';
+      out.png.accent = '#1b56c9';
+      out.png.soft = '#eaf1ff';
+      out.split = planWan > 0 ? buildSplit(A, B, planWan) : null;
+      return out;
+    }
+
+    var wKey = out.winner, lKey = wKey === 'a' ? 'b' : 'a';
+    var W = wKey === 'a' ? A : B, L = wKey === 'a' ? B : A;
+    out.tone = 'green';
+    out.titleHtml = '지금은 <b>' + nameOf(wKey) + ' 체크카드</b>로 몰아주세요';
+    if (L.room <= 0.5) {
+      out.reason = nameOf(lKey) + '는 한도(' + wan(L.cap) + ')를 다 채워서 더 써도 0원이에요. ' +
+        nameOf(wKey) + '는 100만원당 ' + wan(W.per100) + '씩 돌려받고, 한도도 ' + wan(W.room) + ' 남았어요.';
+      out.tip = '이미 쓸 돈의 카드만 바꾸는 거예요. 다음 결제부터 ' + nameOf(wKey) + ' 체크카드로 모아보세요.';
+      out.png.sub = '안 바꾸면 최대 ' + wan(W.ableSaving) + ' 손해';
+    } else {
+      out.reason = nameOf(wKey) + '는 세율 ' + W.rate + '%, ' + nameOf(lKey) + '는 ' + L.rate +
+        '%라서 같은 100만원을 써도 돌려받는 돈이 달라요.';
+      out.tip = '두 분 다 한도가 남아 있지만, ' + nameOf(wKey) + ' 쪽이 100만원당 ' +
+        wan(W.per100 - L.per100) + ' 더 돌려받아요.';
+      out.png.sub = '100만원당 ' + wan(W.per100 - L.per100) + ' 더 돌려받아요';
+    }
+    out.stats = [
+      { label: nameOf(wKey) + ' 카드 100만원당', value: '+' + wan(W.per100) },
+      { label: '한도까지 ' + wan(W.needToCap) + ' 쓰면', value: '+' + wan(W.ableSaving) }
+    ];
+    out.png.headline = nameOf(wKey) + ' 체크카드 몰빵';
+    out.png.accent = '#0a8f63';
+    out.png.soft = '#e9f7f1';
+    out.split = planWan > 0 ? buildSplit(A, B, planWan) : null;
+    return out;
+  }
+
+  function buildSplit(A, B, P) {
+    P = Math.max(0, Number(P) || 0);
+    if (P <= 0) return null;
+    var best = planSplit(A, B, P);
+    var soloA = delta(A, P), soloB = delta(B, P);
+    var used = best.a + best.b;
+    var left = Math.max(0, Math.round((P - used) * 10) / 10);
+    var parts = [];
+    if (best.a > 0.5) parts.push({ who: '나', amt: best.a });
+    if (best.b > 0.5) parts.push({ who: '배우자', amt: best.b });
+    var label, single = null;
+    if (parts.length === 2) label = '나 ' + wan(parts[0].amt) + ' + 배우자 ' + wan(parts[1].amt);
+    else if (parts.length === 1) {
+      single = parts[0].who === '나' ? 'a' : 'b';
+      label = parts[0].who + ' 체크카드에 몰기';
+    } else {
+      label = '카드 공제 0원';
+    }
+    return {
+      amount: P, a: best.a, b: best.b, saving: best.saving, single: single,
+      soloA: Math.round(soloA * 10) / 10,
+      soloB: Math.round(soloB * 10) / 10,
+      left: left, label: label
+    };
+  }
+
+  return {
+    comma: comma, wan: wan,
+    laborDeduction: laborDeduction, taxableOf: taxableOf, rateOf: rateOf,
+    capOf: capOf, baseOf: baseOf, spouse: spouse, delta: delta,
+    planSplit: planSplit, verdict: verdict
+  };
+})();
+</script>
+
+<!-- ==================================================================
+     화면 (DOM)
+     ================================================================== -->
+<script>
+(function () {
+  'use strict';
+
+  /* ===== 배포 설정 =====
+     PUBLIC_URL : 배포 후 실제 주소(예: 'https://hacks0921.github.io/couple-card/').
+                  비워두면 지금 열린 주소를 그대로 써요.
+     WEBHOOK_URL: Google Apps Script 웹앱 URL. 넣으면 의견이 구글 시트로도 쌓여요.
+  */
+  var CONFIG = {
+    PUBLIC_URL: 'https://hacks0921.github.io/couple-card/',
+    WEBHOOK_URL: '',
+    STORAGE_KEY: 'nugu-card-comments-v1'
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var state = {
+    a: { sal: 8000, cred: 2600, deb: 900 },
+    b: { sal: 5000, cred: 1100, deb: 700 },
+    plan: 0,
+    dirty: false,
+    fromLink: false,
+    preset: 'one'
+  };
+
+  var PRESETS = {
+    one:   { a: { sal: 8000, cred: 2600, deb: 900 },  b: { sal: 5000, cred: 1100, deb: 700 } },
+    two:   { a: { sal: 5000, cred: 1000, deb: 400 },  b: { sal: 7200, cred: 1300, deb: 700 } },
+    three: { a: { sal: 10000, cred: 3000, deb: 1500 }, b: { sal: 6000, cred: 1800, deb: 1200 } }
+  };
+
+  var isHttp = location.protocol === 'http:' || location.protocol === 'https:';
+
+  /* ---------- 유틸 ---------- */
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toast._tid);
+    toast._tid = setTimeout(function () { t.classList.remove('on'); }, 2400);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).catch(function () { return legacyCopy(text); });
+    }
+    return Promise.resolve(legacyCopy(text));
+  }
+  function legacyCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function baseUrl() {
+    if (CONFIG.PUBLIC_URL) return CONFIG.PUBLIC_URL;
+    if (isHttp) return location.origin + location.pathname;
+    return location.href.split('?')[0].split('#')[0];
+  }
+
+  function appUrl() {
+    if (CONFIG.PUBLIC_URL) return CONFIG.PUBLIC_URL;
+    if (isHttp) return location.origin + location.pathname;
+    return '';
+  }
+
+  function handoffUrl() {
+    var u;
+    try { u = new URL(baseUrl()); } catch (e) { return baseUrl(); }
+    u.search = '';
+    u.hash = '';
+    u.searchParams.set('a_sal', String(state.a.sal || 0));
+    u.searchParams.set('a_cred', String(state.a.cred || 0));
+    u.searchParams.set('a_deb', String(state.a.deb || 0));
+    // 배우자 숫자는 '배우자에게 받은 링크'를 다시 보낼 때만 함께 담아요 (예시값이 섞이지 않게)
+    if (state.fromLink) {
+      u.searchParams.set('b_sal', String(state.b.sal || 0));
+      u.searchParams.set('b_cred', String(state.b.cred || 0));
+      u.searchParams.set('b_deb', String(state.b.deb || 0));
+    }
+    if (state.plan > 0) u.searchParams.set('plan', String(state.plan));
+    return u.toString();
+  }
+
+  /* ---------- 입력 ---------- */
+  function num(el) {
+    var v = (el.value || '').replace(/[^0-9]/g, '');
+    if (!v) return 0;
+    var n = parseInt(v, 10);
+    return isNaN(n) ? 0 : Math.min(n, 99999);
+  }
+
+  function setInput(el, value) {
+    if (document.activeElement === el) return;
+    el.value = value ? Calc.comma(value) : '';
+  }
+
+  function paintRange(el, value, max) {
+    var pct = max > 0 ? Math.min(100, Math.max(0, value / max * 100)) : 0;
+    el.style.setProperty('--pct', pct + '%');
+  }
+
+  function markDirty() {
+    if (!state.dirty) {
+      state.dirty = true;
+      $('sampleHint').hidden = true;
+      state.preset = null;
+      var chips = document.querySelectorAll('[data-preset]');
+      for (var i = 0; i < chips.length; i++) chips[i].removeAttribute('aria-pressed');
+    }
+  }
+
+  /* ---------- 렌더 ---------- */
+  function render() {
+    var v = Calc.verdict(state.a, state.b, state.plan);
+    paintVerdict(v);
+    paintPerson('a', v.A, v);
+    paintPerson('b', v.B, v);
+    paintPlan(v);
+    paintInputs();
+  }
+
+  function paintVerdict(v) {
+    $('verdict').setAttribute('data-tone', v.tone);
+    $('vTitle').innerHTML = v.titleHtml || v.title;
+    $('vReason').textContent = v.reason;
+
+    var stats = $('vStats');
+    stats.innerHTML = '';
+    (v.stats || []).forEach(function (s) {
+      var d = document.createElement('div');
+      d.className = 'v-stat';
+      var a = document.createElement('span');
+      a.textContent = s.label;
+      var b = document.createElement('strong');
+      b.textContent = s.value;
+      d.appendChild(a); d.appendChild(b);
+      stats.appendChild(d);
+    });
+
+    var tip = $('vTip');
+    if (v.tip) { tip.textContent = v.tip; tip.hidden = false; }
+    else { tip.hidden = true; tip.textContent = ''; }
+
+    var plan = $('vPlan');
+    if (v.split && v.split.saving > 0) {
+      plan.innerHTML = '';
+      var l = document.createElement('span');
+      l.textContent = '앞으로 쓸 ' + Calc.wan(v.split.amount) + ' → ';
+      var b2 = document.createElement('b');
+      b2.textContent = v.split.label;
+      var r = document.createElement('span');
+      r.textContent = ' (' + '+' + Calc.wan(v.split.saving) + ')';
+      plan.appendChild(l); plan.appendChild(b2); plan.appendChild(r);
+      plan.hidden = false;
+    } else if (v.split) {
+      plan.innerHTML = '';
+      var l2 = document.createElement('span');
+      l2.textContent = '앞으로 쓸 ' + Calc.wan(v.split.amount) + ' → ';
+      var b3 = document.createElement('b');
+      b3.textContent = '이미 한도가 다 차서 추가 절세 0원';
+      plan.appendChild(l2); plan.appendChild(b3);
+      plan.hidden = false;
+    } else {
+      plan.hidden = true;
+    }
+  }
+
+  function paintPerson(key, s, v) {
+    var badge = $(key + '-badge');
+    if (!s.hasIncome) {
+      badge.textContent = '미입력';
+      badge.className = 'badge';
+    } else if (s.room <= 0.5) {
+      badge.textContent = '한도 소진';
+      badge.className = 'badge';
+    } else if (s.gap > 0) {
+      badge.textContent = '문턱 미달';
+      badge.className = 'badge amber';
+    } else {
+      badge.textContent = Calc.wan(s.room) + ' 남음';
+      badge.className = 'badge green';
+    }
+
+    $(key + '-meta').textContent = s.hasIncome
+      ? '총급여 ' + Calc.comma(s.gross) + '만원 · 세율 ' + s.rate + '%'
+      : '총급여를 넣어주세요';
+
+    // 25% 문턱
+    var thrPct = s.threshold > 0 ? Math.min(100, s.total / s.threshold * 100) : 0;
+    $(key + '-thrTxt').textContent = s.hasIncome
+      ? Calc.comma(Math.round(s.total)) + ' / ' + Calc.comma(Math.round(s.threshold)) + '만원'
+      : '0 / 0만원';
+    $(key + '-thrBar').style.width = (s.hasIncome ? thrPct : 0) + '%';
+
+    var thrNote = $(key + '-thrNote');
+    if (!s.hasIncome) {
+      thrNote.textContent = '총급여를 넣어주세요';
+      thrNote.className = 'g-note';
+    } else if (s.gap > 0) {
+      thrNote.textContent = '문턱까지 ' + Calc.wan(s.gap) + ' 남음';
+      thrNote.className = 'g-note warn';
+    } else {
+      thrNote.textContent = '문턱 통과 +' + Calc.wan(s.over);
+      thrNote.className = 'g-note ok';
+    }
+
+    // 카드 공제
+    var ddPct = s.cap > 0 ? Math.min(100, s.ded / s.cap * 100) : 0;
+    $(key + '-ddTxt').textContent = s.hasIncome
+      ? Calc.wan(s.ded) + ' / ' + Calc.wan(s.cap)
+      : '0 / 0만원';
+    var ddBar = $(key + '-ddBar');
+    ddBar.style.width = (s.hasIncome ? ddPct : 0) + '%';
+    ddBar.className = 'fill ' + (s.room <= 0.5 ? 'gray' : 'green');
+
+    var ddNote = $(key + '-ddNote');
+    if (!s.hasIncome) {
+      ddNote.textContent = '총급여를 넣어주세요';
+      ddNote.className = 'g-note';
+    } else if (s.room <= 0.5) {
+      ddNote.textContent = '한도 소진 · 더 써도 0원';
+      ddNote.className = 'g-note';
+    } else {
+      ddNote.textContent = '남은 한도 ' + Calc.wan(s.room);
+      ddNote.className = 'g-note ok';
+    }
+
+    // 다음 100만원
+    var nextBox = $(key + '-next');
+    var nextVal = $(key + '-nextVal');
+    if (s.per100 > 0.005) {
+      nextVal.textContent = '+' + Calc.wan(s.per100);
+      nextBox.className = 'next';
+    } else {
+      nextVal.textContent = '0원';
+      nextBox.className = 'next zero';
+    }
+  }
+
+  function paintPlan(v) {
+    var box = $('planResult');
+    box.innerHTML = '';
+    if (!(state.plan > 0)) {
+      var e = document.createElement('p');
+      e.className = 'plan-empty';
+      e.textContent = '금액을 넣으면 바로 계산돼요.';
+      box.appendChild(e);
+      return;
+    }
+    var s = v.split;
+    if (!s) return;
+
+    if (s.saving <= 0.05) {
+      var note0 = document.createElement('p');
+      note0.className = 'p-note';
+      note0.textContent = '둘 다 한도가 꽉 차서 앞으로 쓸 ' + Calc.wan(s.amount) +
+        '은 공제 0원이에요. 혜택 좋은 카드로 쓰세요.';
+      box.appendChild(note0);
+      return;
+    }
+
+    var rows = [];
+    rows.push({ label: s.label, saving: s.saving, best: true });
+    if (s.single !== 'a') rows.push({ label: '나 체크카드에 몰기', saving: s.soloA });
+    if (s.single !== 'b') rows.push({ label: '배우자 체크카드에 몰기', saving: s.soloB });
+
+    var seen = {};
+    rows.sort(function (x, y) { return y.saving - x.saving; });
+    rows.forEach(function (r) {
+      var key = r.label + '|' + r.saving;
+      if (seen[key]) return;
+      seen[key] = 1;
+      var el = document.createElement('div');
+      el.className = 'p-row' + (r.saving > 0 ? '' : ' zero') + (r.best ? ' best' : '');
+      var who = document.createElement('span');
+      who.className = 'who';
+      who.textContent = r.label;
+      var gain = document.createElement('span');
+      gain.className = 'gain';
+      gain.textContent = r.saving > 0 ? '+' + Calc.wan(r.saving) : '0원';
+      el.appendChild(who);
+      if (r.best) {
+        var mk = document.createElement('span');
+        mk.className = 'mark';
+        mk.textContent = '추천';
+        el.appendChild(mk);
+      }
+      el.appendChild(gain);
+      box.appendChild(el);
+    });
+
+    if (s.left > 0.5) {
+      var note = document.createElement('p');
+      note.className = 'p-note';
+      note.textContent = '한도가 다 차서 남는 ' + Calc.wan(s.left) + '은 공제 0원이에요. 혜택 좋은 카드로 쓰세요.';
+      box.appendChild(note);
+    }
+  }
+
+  function paintInputs() {
+    [['a', 'a'], ['b', 'b']].forEach(function (p) {
+      var k = p[0];
+      setInput($(k + '-sal'), state[k].sal);
+      setInput($(k + '-cred'), state[k].cred);
+      setInput($(k + '-deb'), state[k].deb);
+      var r = $(k + '-sal-r');
+      r.value = String(Math.min(20000, state[k].sal || 0));
+      paintRange(r, state[k].sal || 0, 20000);
+    });
+    setInput($('plan'), state.plan);
+  }
+
+  /* ---------- 이벤트 ---------- */
+  function bindNum(id, key, field) {
+    var el = $(id);
+    el.addEventListener('input', function () {
+      state[key][field] = num(el);
+      markDirty();
+      render();
+    });
+    el.addEventListener('focus', function () {
+      el.value = state[key][field] ? String(state[key][field]) : '';
+      try { el.select(); } catch (e) {}
+    });
+    el.addEventListener('blur', function () {
+      el.value = state[key][field] ? Calc.comma(state[key][field]) : '';
+      el.setSelectionRange && el.setSelectionRange(el.value.length, el.value.length);
+    });
+  }
+  bindNum('a-sal', 'a', 'sal');
+  bindNum('a-cred', 'a', 'cred');
+  bindNum('a-deb', 'a', 'deb');
+  bindNum('b-sal', 'b', 'sal');
+  bindNum('b-cred', 'b', 'cred');
+  bindNum('b-deb', 'b', 'deb');
+
+  ['a', 'b'].forEach(function (k) {
+    var r = $(k + '-sal-r');
+    r.addEventListener('input', function () {
+      state[k].sal = parseInt(r.value, 10) || 0;
+      markDirty();
+      render();
+    });
+  });
+
+  var planEl = $('plan');
+  planEl.addEventListener('input', function () {
+    state.plan = num(planEl);
+    markDirty();
+    render();
+  });
+  planEl.addEventListener('focus', function () {
+    planEl.value = state.plan ? String(state.plan) : '';
+    try { planEl.select(); } catch (e) {}
+  });
+  planEl.addEventListener('blur', function () { planEl.value = state.plan ? Calc.comma(state.plan) : ''; });
+
+  var planPanel = $('planPanel');
+  $('planToggle').addEventListener('click', function () {
+    var open = planPanel.classList.toggle('open');
+    $('planToggle').setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  document.querySelectorAll('[data-plan]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.plan = parseInt(b.getAttribute('data-plan'), 10) || 0;
+      planPanel.classList.add('open');
+      $('planToggle').setAttribute('aria-expanded', 'true');
+      markDirty();
+      render();
+      toast('앞으로 쓸 ' + Calc.wan(state.plan) + '으로 계산했어요');
+    });
+  });
+
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var key = b.getAttribute('data-preset');
+      var p = PRESETS[key];
+      if (!p) return;
+      state.a = { sal: p.a.sal, cred: p.a.cred, deb: p.a.deb };
+      state.b = { sal: p.b.sal, cred: p.b.cred, deb: p.b.deb };
+      state.dirty = false;
+      state.preset = key;
+      $('sampleHint').hidden = true;
+      document.querySelectorAll('[data-preset]').forEach(function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+      render();
+      toast('예시 숫자를 불러왔어요');
+    });
+  });
+
+  /* ---------- 공유 ---------- */
+  function shareText(v) {
+    var A = v.A, B = v.B;
+    var lines = [];
+    lines.push('[누구 카드 쓸까? · 2026 연말정산]');
+    lines.push('');
+    lines.push('나 (총급여 ' + Calc.comma(A.gross) + '만원) → 공제 ' + Calc.wan(A.ded) +
+      (A.room <= 0.5 ? ' (한도 소진)' : ' / 한도 ' + Calc.wan(A.room) + ' 남음'));
+    lines.push('배우자 (총급여 ' + Calc.comma(B.gross) + '만원) → 공제 ' + Calc.wan(B.ded) +
+      (B.room <= 0.5 ? ' (한도 소진)' : ' / 한도 ' + Calc.wan(B.room) + ' 남음'));
+    lines.push('');
+    var title = v.title || (v.titleHtml || '').replace(/<[^>]+>/g, '');
+    lines.push('👉 ' + title);
+    if (v.reason) lines.push(v.reason);
+    if (v.tip) lines.push(v.tip);
+    if (v.split && v.split.saving > 0) {
+      lines.push('앞으로 ' + Calc.wan(v.split.amount) + ' → ' + v.split.label + ' (+' + Calc.wan(v.split.saving) + ')');
+    }
+    var u = appUrl();
+    if (u) {
+      lines.push('');
+      lines.push('내 숫자로 10초 계산 → ' + u);
+    }
+    return lines.join('\n');
+  }
+
+  $('btnCopy').addEventListener('click', function () {
+    var v = Calc.verdict(state.a, state.b, state.plan);
+    copyText(shareText(v)).then(function () {
+      toast('결과를 복사했어요. 카톡에 붙여넣어 보세요!');
+    });
+  });
+
+  $('btnHandoff').addEventListener('click', function () {
+    var url = handoffUrl();
+    var text = '내 카드값 채워뒀어. 네 숫자만 넣으면 우리 집 카드 전략 나와!';
+    if (navigator.share && isHttp) {
+      navigator.share({ title: '누구 카드 쓸까?', text: text, url: url }).catch(function () {
+        copyText(url).then(function () { toast('링크를 복사했어요. 카톡에 붙여넣어 보내세요.'); });
+      });
+    } else {
+      copyText(url).then(function () {
+        toast(isHttp ? '링크를 복사했어요. 카톡에 붙여넣어 보내세요.' : '링크를 복사했어요. 배포 후 상대 폰에서 열려요.');
+      });
+    }
+  });
+
+  /* ---------- PNG 카드 ---------- */
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function wrap(ctx, text, maxWidth) {
+    var words = String(text).split(' ');
+    var lines = [], cur = '';
+    for (var i = 0; i < words.length; i++) {
+      var test = cur ? cur + ' ' + words[i] : words[i];
+      if (ctx.measureText(test).width > maxWidth && cur) {
+        lines.push(cur);
+        cur = words[i];
+      } else {
+        cur = test;
+      }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  function drawCard(v) {
+    var W = 1080, H = 1350;
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    var F = 'Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif';
+    var accent = v.png.accent, soft = v.png.soft;
+
+    // 배경
+    x.fillStyle = '#ffffff';
+    x.fillRect(0, 0, W, H);
+    // 상단 톤 띠
+    x.fillStyle = soft;
+    x.fillRect(0, 0, W, 14);
+
+    // 브랜드
+    x.fillStyle = '#0e9f6e';
+    rr(x, 80, 96, 84, 84, 26); x.fill();
+    x.fillStyle = '#ffffff';
+    x.font = '700 44px ' + F;
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText('₩', 122, 142);
+    x.textAlign = 'left';
+    x.fillStyle = '#8b95a1';
+    x.font = '700 30px ' + F;
+    x.fillText('누구 카드 쓸까?', 186, 142);
+
+    // 연말정산 pill
+    x.font = '700 26px ' + F;
+    var pillW = x.measureText('2026 연말정산').width + 44;
+    x.fillStyle = soft;
+    rr(x, W - 80 - pillW, 110, pillW, 58, 29); x.fill();
+    x.fillStyle = accent;
+    x.textAlign = 'center';
+    x.fillText('2026 연말정산', W - 80 - pillW / 2, 141);
+    x.textAlign = 'left';
+
+    // 제목
+    x.textBaseline = 'top';
+    x.fillStyle = '#6b7684';
+    x.font = '700 40px ' + F;
+    x.fillText('12월 우리 집 카드 전략', 80, 250);
+
+    // 큰 결론 (길면 폰트를 줄여서 두 줄 안에)
+    var hs = 92;
+    x.font = '800 ' + hs + 'px ' + F;
+    var lines = wrap(x, v.png.headline, 920);
+    if (lines.length > 1) {
+      hs = 74;
+      x.font = '800 ' + hs + 'px ' + F;
+      lines = wrap(x, v.png.headline, 920);
+    }
+    if (lines.length > 2) lines = lines.slice(0, 2);
+    x.fillStyle = accent;
+    var hy = 320, gap = Math.round(hs * 1.16), y = hy;
+    for (var i = 0; i < lines.length; i++) {
+      x.fillText(lines[i], 80, y);
+      y += gap;
+    }
+
+    // 부제
+    x.fillStyle = '#4e5968';
+    x.font = '600 38px ' + F;
+    var subTop = y + 22;
+    var subLines = wrap(x, v.png.sub, 920).slice(0, 2);
+    for (var j = 0; j < subLines.length; j++) {
+      x.fillText(subLines[j], 80, subTop + j * 50);
+    }
+    var subBottom = subTop + subLines.length * 50;
+
+    // 정보 패널
+    var py = Math.max(620, subBottom + 34);
+    x.fillStyle = '#f7f8fa';
+    rr(x, 80, py, 920, 430, 40); x.fill();
+
+    var people = [
+      { name: '나', s: v.A, color: '#3182f6' },
+      { name: '배우자', s: v.B, color: '#7c5cff' }
+    ];
+    people.forEach(function (p, idx) {
+      var top = py + 40 + idx * 175;
+      x.fillStyle = p.color;
+      x.beginPath(); x.arc(150, top + 40, 38, 0, Math.PI * 2); x.fill();
+      x.fillStyle = '#fff';
+      x.font = '800 28px ' + F;
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      x.fillText(p.name === '나' ? '나' : '배', 150, top + 41);
+      x.textAlign = 'left';
+
+      x.fillStyle = '#191f28';
+      x.font = '800 36px ' + F;
+      x.fillText(p.name, 208, top + 28);
+      x.fillStyle = '#8b95a1';
+      x.font = '600 26px ' + F;
+      x.fillText('총급여 ' + Calc.comma(p.s.gross) + '만원 · 세율 ' + p.s.rate + '%', 208, top + 66);
+
+      // 공제 바
+      var bw = 640;
+      x.fillStyle = '#e6eaee';
+      rr(x, 208, top + 92, bw, 18, 9); x.fill();
+      var pct = p.s.cap > 0 ? Math.min(1, p.s.ded / p.s.cap) : 0;
+      if (pct > 0) {
+        x.fillStyle = pct >= 1 ? '#9aa4b0' : '#12b981';
+        rr(x, 208, top + 92, Math.max(18, bw * pct), 18, 9); x.fill();
+      }
+
+      x.fillStyle = '#4e5968';
+      x.font = '700 26px ' + F;
+      x.textAlign = 'right';
+      x.fillText('공제 ' + Calc.wan(p.s.ded) + ' / ' + Calc.wan(p.s.cap), 960, top + 66);
+      x.textAlign = 'left';
+    });
+
+    // 패널 하단 합산
+    x.fillStyle = '#8b95a1';
+    x.font = '600 28px ' + F;
+    x.textAlign = 'left';
+    x.fillText('우리 집 합산 공제 ' + Calc.wan(v.totalDed) + ' · 예상 절세 ' + Calc.wan(v.totalSaving), 130, py + 388);
+
+    // 하단
+    x.fillStyle = '#8b95a1';
+    x.font = '600 30px ' + F;
+    x.fillText('10초면 끝 · 맞벌이 카드 몰아주기 계산기', 80, 1215);
+    var u = appUrl();
+    if (u) {
+      x.fillStyle = '#b6bec8';
+      x.font = '600 26px ' + F;
+      var short = u.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      if (short.length > 44) short = short.slice(0, 44) + '…';
+      x.fillText(short, 80, 1265);
+    } else {
+      x.fillStyle = '#b6bec8';
+      x.font = '600 26px ' + F;
+      x.fillText('누구 카드 쓸까?', 80, 1265);
+    }
+
+    return c;
+  }
+
+  function downloadBlob(blob, name) {
+    var a = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  function withFonts(cb) {
+    var done = false;
+    var run = function () { if (!done) { done = true; cb(); } };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.load('800 92px Pretendard').catch(function () {}).then(function () {
+        document.fonts.ready.then(run).catch(run);
+      });
+      setTimeout(run, 1200);
+    } else {
+      run();
+    }
+  }
+
+  $('btnPng').addEventListener('click', function () {
+    var btn = $('btnPng');
+    var label = btn.textContent;
+    btn.textContent = '만드는 중…';
+    withFonts(function () {
+      var v = Calc.verdict(state.a, state.b, state.plan);
+      var canvas = drawCard(v);
+      var name = 'card-strategy-' + new Date().toISOString().slice(0, 10) + '.png';
+      if (canvas.toBlob) {
+        canvas.toBlob(function (blob) {
+          downloadBlob(blob, name);
+          btn.textContent = label;
+          toast('카드 이미지를 저장했어요. 카톡·인스타에 올려보세요!');
+        }, 'image/png');
+      } else {
+        var a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = name;
+        a.click();
+        btn.textContent = label;
+        toast('카드 이미지를 저장했어요.');
+      }
+    });
+  });
+
+  /* ---------- 의견 ---------- */
+  var SEEDS = [
+    { name: '지은', text: '와 이거 3초 만에 답 나오네요. 남편한테 바로 링크 보냈어요.', at: 0, seed: true },
+    { name: '맞벌이 5년차', text: '둘 다 한도 찼다고 떠서 연금저축 알아보러 갑니다 ㅋㅋ', at: 0, seed: true }
+  ];
+
+  function loadComments() {
+    try {
+      var raw = localStorage.getItem(CONFIG.STORAGE_KEY);
+      if (!raw) return null;
+      var arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr : null;
+    } catch (e) { return null; }
+  }
+  function saveComments(arr) {
+    try { localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
+
+  function timeAgo(ts) {
+    if (!ts) return '';
+    var d = Math.floor((Date.now() - ts) / 1000);
+    if (d < 60) return '방금 전';
+    if (d < 3600) return Math.floor(d / 60) + '분 전';
+    if (d < 86400) return Math.floor(d / 3600) + '시간 전';
+    return Math.floor(d / 86400) + '일 전';
+  }
+
+  function renderComments() {
+    var stored = loadComments();
+    var list = stored && stored.length ? stored : SEEDS;
+    var ul = $('cmtList');
+    ul.innerHTML = '';
+    $('cmtCount').textContent = String(list.length);
+    list.slice(0, 30).forEach(function (c) {
+      var li = document.createElement('li');
+      li.className = 'cmt-item';
+      var top = document.createElement('div');
+      top.className = 'c-top';
+      var nm = document.createElement('span');
+      nm.className = 'c-name';
+      nm.textContent = c.name || '익명';
+      top.appendChild(nm);
+      if (c.seed) {
+        var tag = document.createElement('span');
+        tag.className = 'c-tag';
+        tag.textContent = '예시';
+        top.appendChild(tag);
+      }
+      var tm = document.createElement('span');
+      tm.className = 'c-time';
+      tm.textContent = c.seed ? '' : timeAgo(c.at);
+      top.appendChild(tm);
+      var p = document.createElement('p');
+      p.textContent = c.text;
+      li.appendChild(top);
+      li.appendChild(p);
+      ul.appendChild(li);
+    });
+  }
+
+  $('cmtForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var t = $('cmtText');
+    var n = $('cmtName');
+    var text = (t.value || '').trim();
+    if (!text) {
+      toast('한 줄만 적어주세요 :)');
+      t.focus();
+      return;
+    }
+    var item = {
+      name: (n.value || '').trim().slice(0, 10) || '익명',
+      text: text.slice(0, 140),
+      at: Date.now()
+    };
+    var arr = loadComments() || [];
+    arr.unshift(item);
+    saveComments(arr);
+    renderComments();
+    t.value = '';
+    toast('고마워요! 다음 버전에 반영할게요');
+
+    if (CONFIG.WEBHOOK_URL) {
+      try {
+        fetch(CONFIG.WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            name: item.name, text: item.text, at: new Date(item.at).toISOString(),
+            url: location.href, ua: navigator.userAgent
+          })
+        }).catch(function () {});
+      } catch (err) {}
+    }
+  });
+
+  /* ---------- URL에서 값 복원 ---------- */
+  function loadFromUrl() {
+    var p;
+    try { p = new URLSearchParams(location.search); } catch (e) { return false; }
+    if (!p) return false;
+    var keys = ['a_sal', 'a_cred', 'a_deb', 'b_sal', 'b_cred', 'b_deb'];
+    var has = false;
+    keys.forEach(function (k) { if (p.get(k) !== null) has = true; });
+    if (!has) return false;
+
+    var g = function (k, d) {
+      var v = p.get(k);
+      if (v === null) return d;
+      var n = parseInt(v, 10);
+      return isNaN(n) ? d : Math.min(99999, Math.max(0, n));
+    };
+    state.a = { sal: g('b_sal', 0), cred: g('b_cred', 0), deb: g('b_deb', 0) };
+    state.b = { sal: g('a_sal', 0), cred: g('a_cred', 0), deb: g('a_deb', 0) };
+    state.plan = g('plan', 0);
+    state.dirty = true;
+    state.fromLink = true;
+    state.preset = null;
+    $('sampleHint').hidden = true;
+    if (state.plan > 0) {
+      planPanel.classList.add('open');
+      $('planToggle').setAttribute('aria-expanded', 'true');
+    }
+    $('banner').hidden = false;
+    $('bannerText').textContent = (state.a.sal || state.a.cred || state.a.deb)
+      ? '두 사람 숫자로 계산한 결과예요. 내 숫자로 바꿔볼 수 있어요.'
+      : '빈 칸만 채우면 우리 집 결론이 바로 나와요.';
+    return true;
+  }
+
+  $('bannerReset').addEventListener('click', function () {
+    state.a = { sal: 0, cred: 0, deb: 0 };
+    state.b = { sal: 0, cred: 0, deb: 0 };
+    state.plan = 0;
+    state.dirty = true;
+    state.fromLink = false;
+    $('banner').hidden = true;
+    try {
+      history.replaceState(null, '', location.pathname);
+    } catch (e) {}
+    render();
+    $('a-sal').focus();
+  });
+
+  /* ---------- 시작 ---------- */
+  if (location.protocol === 'file:') $('fileNote').hidden = false;
+  var fromUrl = loadFromUrl();
+  if (!fromUrl) {
+    document.querySelector('[data-preset="one"]').setAttribute('aria-pressed', 'true');
+  }
+  renderComments();
+  render();
+})();
+</script>
+</body>
+</html>
