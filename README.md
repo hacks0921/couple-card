@@ -5,7 +5,8 @@
 ## 1. 열어보기
 
 - 파일을 그대로 브라우저로 열면 됩니다. (로컬에서 더블클릭)
-- 배포는 GitHub Pages에 이 파일만 올리면 끝: 저장소 → Settings → Pages → Branch `main` / `/root`.
+- 배포 주소: **https://hacks0921.github.io/couple-card/** (GitHub Pages)
+- 현재 Pages는 `gh-pages` 브랜치 루트에서 배포되고 있습니다. 내용을 고칠 때는 `main`에 커밋한 뒤 `git push origin main:gh-pages`로 두 브랜치를 함께 올리거나, 저장소 → Settings → Pages에서 브랜치를 `main` / `/ (root)`로 바꿔 주세요.
 
 ## 2. 배포 후 3줄 설정 (index.html 맨 아래 `<script>` 안 `CONFIG`)
 
