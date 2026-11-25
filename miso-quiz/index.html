@@ -1,0 +1,1227 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>🧠 초3 미소의 스피드 퀴즈 쇼 | 미소르의 퀴즈</title>
+<meta name="description" content="하늘색 네모 친구 미소르가 진행하는 10문제 스피드 퀴즈 쇼! 혼자 도전하거나 아빠와 번갈아 대결해 봐.">
+<meta name="theme-color" content="#eaf7ff">
+<meta property="og:title" content="🧠 초3 미소의 스피드 퀴즈 쇼">
+<meta property="og:description" content="15초 안에 정답을 골라라! 넌센스부터 우주·역사까지 60문제.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23d9f3ff'/%3E%3Crect x='24' y='24' width='52' height='52' rx='14' fill='%2357c3ea'/%3E%3Ctext x='50' y='66' font-size='34' text-anchor='middle'%3E%3F%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;overscroll-behavior:none}
+  body{
+    background:#eaf7ff;color:#1f3b4d;
+    font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    touch-action:none;-webkit-user-select:none;user-select:none;
+  }
+  #app{position:fixed;inset:0;display:flex;justify-content:center;background:#dff2fb}
+  #stage{
+    position:relative;width:100%;max-width:520px;height:100%;overflow:hidden;
+    background:
+      radial-gradient(120% 40% at 50% -6%,rgba(255,244,206,.85),rgba(255,255,255,0) 58%),
+      radial-gradient(90% 40% at 50% 108%,rgba(255,255,255,.85),rgba(255,255,255,0) 70%),
+      linear-gradient(180deg,#f4fcff 0%,#ddf2ff 52%,#cfeaff 100%);
+    box-shadow:0 0 70px rgba(90,150,190,.22);
+  }
+  #fx{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+
+  .screen{
+    position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;transition:opacity .3s;
+  }
+  .screen.show{opacity:1;pointer-events:auto}
+  .scroll{
+    width:100%;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:calc(14px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;align-items:center;
+  }
+
+  /* ---------- host ---------- */
+  .host{width:58px;height:58px;flex:0 0 auto;animation:hop 2.2s ease-in-out infinite}
+  .host svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 10px rgba(40,140,185,.22))}
+  @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  .blink{animation:blink 4.4s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.12)}}
+
+  /* ---------- home ---------- */
+  #home .scroll{justify-content:center}
+  .hero{
+    width:100%;max-width:430px;display:flex;flex-direction:column;align-items:center;text-align:center;
+    background:rgba(255,255,255,.9);border:2px solid #d7f0ff;border-radius:32px;
+    padding:22px 18px 20px;box-shadow:0 18px 44px rgba(70,140,180,.16);backdrop-filter:blur(9px);
+  }
+  .eyebrow{
+    margin:0 0 10px;font-size:11.5px;font-weight:900;color:#b07d1e;letter-spacing:.05em;
+    background:#fff7e2;padding:6px 13px 7px;border-radius:999px;border:2px solid #ffe3a6;
+  }
+  h1{margin:0;font-size:clamp(25px,7.4vw,33px);line-height:1.24;font-weight:900;letter-spacing:-.035em;color:#16384c}
+  h1 .hl{
+    display:inline-block;color:#1b8fc4;
+    background:linear-gradient(180deg,transparent 60%,#c9f0ff 60%,#c9f0ff 94%,transparent 94%);
+    padding:0 .05em;
+  }
+  .lead{margin:11px 0 0;font-size:13.5px;line-height:1.6;font-weight:700;color:#5e849b}
+  .modes{width:100%;display:flex;flex-direction:column;gap:10px;margin-top:16px}
+  .mode{
+    width:100%;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;
+    font-family:inherit;border:2px solid #cfeafd;border-radius:22px;padding:13px 15px;
+    background:linear-gradient(180deg,#ffffff,#f2fbff);transition:transform .09s,border-color .15s,box-shadow .15s;
+    box-shadow:0 8px 20px rgba(70,140,180,.12);
+  }
+  .mode:active{transform:scale(.98)}
+  .mode .ic{
+    width:46px;height:46px;flex:0 0 46px;border-radius:15px;display:grid;place-items:center;font-size:23px;
+    background:#e3f7ff;
+  }
+  .mode.duel .ic{background:#fff2d9}
+  .mode .tx{flex:1;min-width:0}
+  .mode .tx b{display:block;font-size:15.5px;font-weight:900;color:#12384f;letter-spacing:-.02em}
+  .mode .tx span{display:block;font-size:11.5px;font-weight:700;color:#79a2b8;margin-top:2px}
+  .mode .go{font-size:18px;color:#8fc6e0;font-weight:900}
+  .bestline{margin:14px 0 0;font-size:12px;font-weight:800;color:#7fa8be}
+  .bestline b{color:#1b8fc4}
+  .mute-wrap{position:absolute;top:calc(10px + env(safe-area-inset-top));right:12px;z-index:12;display:flex;gap:8px}
+  .icon-btn{
+    width:38px;height:38px;border-radius:13px;border:2px solid #d7f0ff;background:rgba(255,255,255,.92);
+    display:grid;place-items:center;padding:0;cursor:pointer;box-shadow:0 4px 14px rgba(70,140,180,.14);
+  }
+  .icon-btn svg{width:20px;height:20px;display:block}
+
+  /* ---------- versus setup ---------- */
+  #vsSetup .scroll{justify-content:center}
+  .panel{
+    width:100%;max-width:430px;background:rgba(255,255,255,.93);border:2px solid #d7f0ff;border-radius:28px;
+    padding:20px 17px;box-shadow:0 18px 44px rgba(70,140,180,.16);text-align:center;
+  }
+  .panel h2{margin:0;font-size:21px;font-weight:900;letter-spacing:-.03em;color:#16384c}
+  .panel p.sub{margin:7px 0 0;font-size:12.5px;font-weight:700;color:#7fa8be}
+  .pfield{margin-top:16px;text-align:left}
+  .pfield .who{font-size:11.5px;font-weight:900;color:#8fb0c2;letter-spacing:.03em}
+  .namerow{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .namerow .av{font-size:24px}
+  .namerow input{
+    flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:#12384f;
+    border:2px solid #d7f0ff;border-radius:14px;padding:10px 12px;background:#f7fdff;outline:none;
+  }
+  .namerow input:focus{border-color:#5cc8f2;background:#fff}
+  .qchips{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .qchip{
+    font-family:inherit;font-size:12px;font-weight:800;color:#6a9cba;background:#fff;
+    border:2px solid #e0f2fb;border-radius:999px;padding:6px 10px 7px;cursor:pointer;line-height:1;
+  }
+  .qchip.on{background:#e3f7ff;border-color:#5cc8f2;color:#1177a3}
+  .btn{
+    font-family:inherit;border:none;cursor:pointer;font-weight:900;letter-spacing:-.02em;
+    border-radius:999px;transition:transform .09s,filter .15s;
+  }
+  .btn:active{transform:scale(.96)}
+  .btn.primary{
+    color:#fff;background:linear-gradient(180deg,#63d0f5,#1fa8dc);
+    box-shadow:0 10px 24px rgba(31,168,220,.4),inset 0 -4px 0 rgba(10,110,150,.28);
+  }
+  .btn.gold{
+    color:#7a4d00;background:linear-gradient(180deg,#ffe08a,#ffc23c);
+    box-shadow:0 10px 24px rgba(230,160,20,.34),inset 0 -4px 0 rgba(180,110,0,.24);
+  }
+  .btn.ghost{
+    color:#2d86ad;background:rgba(255,255,255,.95);border:2px solid #d8effb;
+    box-shadow:0 4px 14px rgba(70,140,180,.14);
+  }
+  #vsStart{width:100%;margin-top:18px;padding:16px 20px;font-size:18px}
+  #vsBack{width:100%;margin-top:8px;padding:12px 20px;font-size:14.5px}
+
+  /* ---------- quiz ---------- */
+  #quiz .scroll{padding-top:calc(10px + env(safe-area-inset-top));justify-content:center;display:flex;flex-direction:column;height:100%;transition:transform .28s ease}
+  #quiz.fb-open .scroll{transform:translateY(-82px)}
+  .topbar{width:100%;display:flex;align-items:center;gap:8px;padding-right:44px}
+  .tpill{
+    display:flex;align-items:baseline;gap:5px;background:rgba(255,255,255,.92);border:2px solid #d7f0ff;
+    border-radius:999px;padding:5px 12px 6px;box-shadow:0 4px 14px rgba(70,140,180,.12);
+  }
+  .tpill .lbl{font-size:10.5px;font-weight:800;color:#6a9cba}
+  .tpill b{font-size:17px;font-weight:900;color:#12384f;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .topbar .spacer{flex:1}
+  .timerwrap{width:100%;margin-top:10px}
+  .timerbar{
+    width:100%;height:10px;border-radius:999px;background:rgba(255,255,255,.75);
+    border:2px solid #d7f0ff;overflow:hidden;
+  }
+  .timerbar i{
+    display:block;height:100%;width:100%;border-radius:999px;
+    background:linear-gradient(90deg,#7fe0a8,#43cf8a);transition:width .1s linear,background .3s;
+  }
+  .timerbar.low i{background:linear-gradient(90deg,#ffb36b,#ff7a6b)}
+  .timerwrap .tlbl{
+    display:flex;justify-content:space-between;margin-top:5px;font-size:11px;font-weight:800;color:#8fb0c2;
+    font-variant-numeric:tabular-nums;
+  }
+  .turn{
+    width:100%;margin-top:10px;padding:9px 14px;border-radius:16px;text-align:center;
+    font-size:14.5px;font-weight:900;letter-spacing:-.02em;color:#1177a3;
+    background:rgba(255,255,255,.92);border:2px solid #9fdcf7;box-shadow:0 6px 16px rgba(60,180,230,.16);
+  }
+  .turn.b{color:#b06b18;border-color:#ffd794;box-shadow:0 6px 16px rgba(230,170,50,.18)}
+  .hostrow{width:100%;display:flex;align-items:flex-start;gap:9px;margin-top:12px}
+  .bubble{
+    position:relative;flex:1;min-width:0;margin-top:6px;
+    background:#fff;border:2px solid #d7f0ff;border-radius:16px;padding:8px 12px 9px;
+    font-size:12.5px;font-weight:800;color:#4c7d96;line-height:1.45;
+    box-shadow:0 6px 16px rgba(70,140,180,.1);
+  }
+  .bubble:before{
+    content:'';position:absolute;left:-8px;top:14px;width:12px;height:12px;background:#fff;
+    border-left:2px solid #d7f0ff;border-bottom:2px solid #d7f0ff;transform:rotate(45deg);
+  }
+  .qcard{
+    width:100%;margin-top:11px;background:#fff;border:2px solid #d7f0ff;border-radius:24px;
+    padding:16px 16px 18px;box-shadow:0 12px 30px rgba(70,140,180,.14);
+    display:flex;flex-direction:column;min-height:104px;
+  }
+  .qtag{
+    align-self:flex-start;font-size:10.5px;font-weight:900;color:#1b8fc4;background:#e9f8ff;
+    border:1.5px solid #cdeeff;border-radius:999px;padding:4px 10px 5px;letter-spacing:.02em;
+  }
+  .qtext{
+    margin:9px 0 0;font-size:clamp(18px,5.1vw,22px);line-height:1.42;font-weight:900;
+    letter-spacing:-.03em;color:#12384f;word-break:keep-all;
+  }
+  .choices{width:100%;display:grid;grid-template-columns:1fr;grid-auto-rows:minmax(62px,auto);gap:9px;margin-top:12px;flex:0 0 auto}
+  .choice{
+    position:relative;font-family:inherit;text-align:left;cursor:pointer;
+    background:#fff;border:2px solid #dcf1fb;border-radius:18px;padding:13px 14px 13px 46px;
+    font-size:clamp(15px,4.2vw,17px);font-weight:800;color:#245066;line-height:1.35;letter-spacing:-.02em;
+    box-shadow:0 6px 16px rgba(70,140,180,.1);
+    display:flex;align-items:center;transition:transform .08s,border-color .15s,background .15s;
+    word-break:keep-all;
+  }
+  .choice:active{transform:scale(.98)}
+  .choice .k{
+    position:absolute;left:12px;top:50%;transform:translateY(-50%);
+    width:24px;height:24px;border-radius:9px;display:grid;place-items:center;
+    font-size:11.5px;font-weight:900;color:#7aa8bd;background:#eef9ff;
+  }
+  .choice.right{background:#e7fbef;border-color:#5dd08c}
+  .choice.right .k{background:#5dd08c;color:#fff}
+  .choice.wrong{background:#fff0ee;border-color:#ff9b8a}
+  .choice.right{animation:pop .42s cubic-bezier(.2,1.5,.4,1)}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+  .choice.wrong .k{background:#ff9b8a;color:#fff}
+  .choice.dim{opacity:.5}
+  .choice:disabled{cursor:default}
+  .dots{display:flex;gap:4px;justify-content:center;margin:12px 0 2px;flex-wrap:wrap;flex:0 0 auto}
+  .dots i{display:block;width:13px;height:6px;border-radius:3px;background:rgba(255,255,255,.9);border:1.5px solid #cfeafd}
+  .dots i.ok{background:#5dd08c;border-color:#49b97a}
+  .dots i.no{background:#ffb0a2;border-color:#ff9b8a}
+  .dots i.now{background:#63d0f5;border-color:#1fa8dc;transform:translateY(-1px)}
+
+  /* ---------- feedback sheet ---------- */
+  #fb{
+    position:absolute;left:0;right:0;bottom:0;z-index:20;
+    transform:translateY(104%);transition:transform .32s cubic-bezier(.2,.9,.3,1);
+    padding:0 12px calc(12px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+  #fb.show{transform:translateY(0);pointer-events:auto}
+  .fbcard{
+    width:100%;max-width:520px;margin:0 auto;border-radius:26px 26px 22px 22px;
+    background:#fff;box-shadow:0 -8px 34px rgba(40,110,150,.22);
+    border:3px solid #e7f6ff;border-bottom:none;padding:14px 16px 14px;text-align:center;
+  }
+  .fbcard.ok{border-color:#b6ecc9}
+  .fbcard.no{border-color:#ffd3ca}
+  .fbtop{display:flex;align-items:center;justify-content:center;gap:8px}
+  .fbemoji{font-size:24px;line-height:1}
+  .fbtitle{margin:0;font-size:19px;font-weight:900;letter-spacing:-.03em;color:#1f7f4c}
+  .fbcard.no .fbtitle{color:#d1573f}
+  .fbans{margin:7px 0 0;font-size:13px;font-weight:800;color:#4c7d96}
+  .fbans b{color:#12384f}
+  .fbwhy{
+    margin:9px 0 0;font-size:12.5px;font-weight:700;color:#5e849b;line-height:1.55;
+    background:#f4fbff;border-radius:14px;padding:9px 12px;text-align:left;word-break:keep-all;
+  }
+  .fbnext{
+    width:100%;margin-top:11px;padding:14px 18px;font-size:16.5px;border-radius:16px;
+  }
+
+  /* ---------- result ---------- */
+  #result .scroll{justify-content:center}
+  .rcard{
+    width:100%;max-width:430px;background:rgba(255,255,255,.94);border:2px solid #d7f0ff;border-radius:30px;
+    padding:22px 18px 18px;box-shadow:0 18px 44px rgba(70,140,180,.18);text-align:center;
+  }
+  .rtrophy{font-size:44px;line-height:1;animation:hop 2.4s ease-in-out infinite}
+  .rtitle{margin:8px 0 0;font-size:clamp(21px,6vw,26px);font-weight:900;letter-spacing:-.03em;color:#16384c}
+  .rtitle span{color:#1b8fc4}
+  .rsub{margin:8px 0 0;font-size:13px;font-weight:800;color:#6a9cba;line-height:1.5}
+  .stars{display:flex;justify-content:center;gap:6px;margin-top:12px;font-size:26px;letter-spacing:2px}
+  .stars .off{opacity:.22}
+  .stats{display:flex;gap:8px;margin-top:14px;width:100%;justify-content:center}
+  .stat{
+    flex:1;max-width:120px;background:#f6fcff;border:2px solid #e0f2fb;border-radius:16px;padding:9px 4px 10px;
+  }
+  .stat b{display:block;font-size:20px;font-weight:900;color:#12384f;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .stat span{display:block;font-size:10.5px;font-weight:800;color:#6a9cba;margin-top:1px}
+  .duelrow{
+    display:flex;align-items:center;gap:10px;margin-top:12px;background:#f6fcff;border:2px solid #e0f2fb;
+    border-radius:18px;padding:11px 13px;
+  }
+  .duelrow .who{width:66px;text-align:left;font-size:13.5px;font-weight:900;color:#245066;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .duelrow .bar{flex:1;height:12px;border-radius:999px;background:#e4f3fb;overflow:hidden}
+  .duelrow .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#7fd9f7,#1fa8dc)}
+  .duelrow.b .bar i{background:linear-gradient(90deg,#ffd166,#f2a71b)}
+  .duelrow .sc{width:52px;text-align:right;font-size:14px;font-weight:900;color:#12384f;font-variant-numeric:tabular-nums}
+  .duelrow.win{box-shadow:inset 0 0 0 2px #8fdcf7}
+  #againBtn{width:100%;margin-top:16px;padding:16px 20px;font-size:18px}
+  #homeBtn2{width:100%;margin-top:8px;padding:12px 20px;font-size:14.5px}
+
+  @media (prefers-reduced-motion:reduce){
+    .host,.rtrophy,.blink{animation:none}
+    *{transition-duration:.01ms!important}
+  }
+  @media (max-height:730px){
+    #quiz.fb-open .scroll{transform:translateY(-26px)}
+    .hero{padding:16px 15px 15px;border-radius:26px}
+    h1{font-size:23px}
+    .lead{font-size:12.5px;margin-top:8px}
+    .modes{margin-top:12px;gap:8px}
+    .mode{padding:10px 12px;border-radius:18px}
+    .mode .ic{width:40px;height:40px;flex:0 0 40px;font-size:20px;border-radius:13px}
+    .qcard{padding:13px 14px 14px;margin-top:9px;min-height:92px}
+    .choices{gap:7px;margin-top:9px}
+    .choice{padding:10px 9px 10px 34px;min-height:58px;font-size:13px;border-radius:15px}
+    .hostrow{margin-top:9px}
+    .host{width:48px;height:48px}
+    .bubble{font-size:11.5px;padding:6px 10px 7px}
+    .dots{margin-top:9px}
+    .fbwhy{font-size:11.5px;padding:7px 10px}
+    .fbnext{padding:12px 16px;font-size:15px}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+ <div id="stage">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <div class="mute-wrap">
+    <button id="muteBtn" class="icon-btn" type="button" aria-label="소리 끄기">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><g id="icoOn"><path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z" fill="#2d86ad"/><path d="M15.4 8.6a4.6 4.6 0 0 1 0 6.8M18 6a8 8 0 0 1 0 12" fill="none" stroke="#2d86ad" stroke-width="1.9" stroke-linecap="round"/></g><g id="icoOff" hidden><path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z" fill="#9dc0d1"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="#9dc0d1" stroke-width="1.9" stroke-linecap="round"/></g></svg>
+    </button>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <section id="home" class="screen show">
+    <div class="scroll">
+      <div class="hero">
+        <div class="host" aria-hidden="true" style="margin-bottom:6px">
+          <svg viewBox="0 0 64 64">
+            <rect x="6" y="6" width="52" height="50" rx="16" fill="#63cdf1"/>
+            <rect x="12" y="12" width="40" height="38" rx="11" fill="none" stroke="#fff" stroke-opacity=".72" stroke-width="4"/>
+            <circle cx="24" cy="31" r="4" fill="#1d4256" class="blink" style="transform-origin:24px 31px"/>
+            <circle cx="40" cy="31" r="4" fill="#1d4256" class="blink" style="transform-origin:40px 31px"/>
+            <circle cx="18" cy="39" r="4.6" fill="#ffb2cd"/>
+            <circle cx="46" cy="39" r="4.6" fill="#ffb2cd"/>
+            <path d="M25 40q7 6 14 0" fill="none" stroke="#1d4256" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="eyebrow">미소르가 진행하는 퀴즈 쇼</p>
+        <h1>🧠 초3 미소의<br><span class="hl">스피드 퀴즈 쇼</span></h1>
+        <p class="lead">한 문제당 15초!<br>넌센스부터 우주·역사까지 골라 맞혀 봐</p>
+        <div class="modes">
+          <button id="soloBtn" class="mode" type="button">
+            <span class="ic">🧠</span>
+            <span class="tx"><b>혼자 도전</b><span>10문제 · 콤보 보너스</span></span>
+            <span class="go">▶</span>
+          </button>
+          <button id="duelBtn" class="mode duel" type="button">
+            <span class="ic">🤝</span>
+            <span class="tx"><b>아빠 vs 미소 대결</b><span>번갈아 10문제 · 승자 트로피</span></span>
+            <span class="go">▶</span>
+          </button>
+        </div>
+        <p class="bestline" id="bestLine">아직 기록이 없어요</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VERSUS SETUP ============ -->
+  <section id="vsSetup" class="screen">
+    <div class="scroll">
+      <div class="panel">
+        <h2>누구랑 대결할까요?</h2>
+        <p class="sub">이름을 바꿔도 돼요</p>
+        <div class="pfield">
+          <div class="who">첫 번째 도전자</div>
+          <div class="namerow">
+            <span class="av" id="avA">👧</span>
+            <input id="nameA" type="text" maxlength="8" value="미소" aria-label="첫 번째 도전자 이름">
+          </div>
+          <div class="qchips" id="chipsA"></div>
+        </div>
+        <div class="pfield">
+          <div class="who">두 번째 도전자</div>
+          <div class="namerow">
+            <span class="av" id="avB">👨</span>
+            <input id="nameB" type="text" maxlength="8" value="아빠" aria-label="두 번째 도전자 이름">
+          </div>
+          <div class="qchips" id="chipsB"></div>
+        </div>
+        <button id="vsStart" class="btn gold" type="button">대결 시작!</button>
+        <button id="vsBack" class="btn ghost" type="button">돌아가기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="screen">
+    <div class="scroll">
+      <div class="topbar">
+        <div class="tpill"><span class="lbl">문제</span><b id="qNo">1</b><span class="lbl">/ 10</span></div>
+        <div class="tpill"><span class="lbl">점수</span><b id="qScore">0</b></div>
+        <div class="spacer"></div>
+        <div class="tpill" id="streakPill" hidden><span class="lbl">🔥</span><b id="qStreak">0</b></div>
+      </div>
+
+      <div class="timerwrap">
+        <div class="timerbar" id="timerBar"><i id="timerFill"></i></div>
+        <div class="tlbl"><span id="turnLabel">혼자 도전</span><span id="timerTxt">15초</span></div>
+      </div>
+
+      <div class="turn" id="turnBanner" hidden>👧 미소 차례!</div>
+
+      <div class="hostrow">
+        <div class="host" id="quizHost" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <rect x="6" y="6" width="52" height="50" rx="16" fill="#63cdf1"/>
+            <rect x="12" y="12" width="40" height="38" rx="11" fill="none" stroke="#fff" stroke-opacity=".72" stroke-width="4"/>
+            <circle cx="24" cy="30" r="4" fill="#1d4256" class="blink" style="transform-origin:24px 30px"/>
+            <circle cx="40" cy="30" r="4" fill="#1d4256" class="blink" style="transform-origin:40px 30px"/>
+            <circle cx="18" cy="38" r="4.6" fill="#ffb2cd"/>
+            <circle cx="46" cy="38" r="4.6" fill="#ffb2cd"/>
+            <path d="M26 39q6 5 12 0" fill="none" stroke="#1d4256" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="bubble" id="hostBubble">정답을 골라 봐! 15초 안에!</div>
+      </div>
+
+      <div class="qcard">
+        <span class="qtag" id="qTag">넌센스</span>
+        <p class="qtext" id="qText">문제</p>
+      </div>
+
+      <div class="choices" id="choices"></div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div id="fb">
+      <div class="fbcard ok" id="fbCard">
+        <div class="fbtop">
+          <span class="fbemoji" id="fbEmoji">🎉</span>
+          <p class="fbtitle" id="fbTitle">딩동댕! 정답이야</p>
+        </div>
+        <p class="fbans" id="fbAns"></p>
+        <p class="fbwhy" id="fbWhy"></p>
+        <button id="fbNext" class="btn primary fbnext" type="button">다음 문제 ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="result" class="screen">
+    <div class="scroll">
+      <div class="rcard">
+        <div class="rtrophy" id="rEmoji">🏆</div>
+        <h2 class="rtitle" id="rTitle">참 잘했어요!</h2>
+        <p class="rsub" id="rSub"></p>
+        <div class="stars" id="rStars"></div>
+
+        <div id="soloStats">
+          <div class="stats">
+            <div class="stat"><b id="rScore">0</b><span>점수</span></div>
+            <div class="stat"><b id="rRight">0</b><span>맞힌 문제</span></div>
+            <div class="stat"><b id="rStreak">0</b><span>최고 콤보</span></div>
+          </div>
+        </div>
+
+        <div id="duelStats" hidden>
+          <div class="duelrow" id="duelA">
+            <span class="who" id="dwA">미소</span>
+            <span class="bar"><i id="dbA"></i></span>
+            <span class="sc" id="dsA">0</span>
+          </div>
+          <div class="duelrow b" id="duelB">
+            <span class="who" id="dwB">아빠</span>
+            <span class="bar"><i id="dbB"></i></span>
+            <span class="sc" id="dsB">0</span>
+          </div>
+        </div>
+
+        <button id="againBtn" class="btn primary" type="button">한 번 더!</button>
+        <button id="homeBtn2" class="btn ghost" type="button">처음으로</button>
+      </div>
+    </div>
+  </section>
+ </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+     문제 은행 (64문제)
+     c: 보기, a: 정답 번호, why: 한 줄 설명, t: 종류
+     ========================================================= */
+  var BANK = [
+    /* ---- 넌센스 ---- */
+    { t: '넌센스', q: '세상에서 가장 뜨거운 과일은?', c: ['천도복숭아', '얼음수박', '눈사과', '바람딸기'], a: 0,
+      why: "천도복숭아의 '천도'를 1000도처럼 생각하면 세상에서 가장 뜨거운 과일이 돼요!" },
+    { t: '넌센스', q: '왕이 넘어지면 무슨 소리가 날까요?', c: ['킹콩', '쾅쾅', '어흥', '왕왕'], a: 0,
+      why: "왕(king)이 '콩!' 하고 넘어져서 킹콩이 됐어요." },
+    { t: '넌센스', q: '소가 웃으면 뭐라고 할까요?', c: ['우하하', '음메', '꺄르르', '히히'], a: 0,
+      why: "소는 '우' 하고 울어요. '우' + '하하' = 우하하!" },
+    { t: '넌센스', q: '개가 사람을 가르치면?', c: ['개인교습', '멍멍수업', '강아지학교', '꼬리훈련'], a: 0,
+      why: '개가 사람을 가르치는 교습이라서 개인교습이에요!' },
+    { t: '넌센스', q: '오리가 얼면 무엇이 될까요?', c: ['언덕', '오리빙수', '꽁꽁', '얼음오리'], a: 0,
+      why: '영어로 오리는 duck. 오리가 얼음이 되면 언덕!' },
+    { t: '넌센스', q: '물이 가득 찬 개는?', c: ['물개', '불개', '눈개', '바람개'], a: 0,
+      why: '물 + 개 = 물개!' },
+    { t: '넌센스', q: '가장 뜨거운 개는?', c: ['핫도그', '불개', '뜨개', '땀개'], a: 0,
+      why: 'hot(뜨거운) + dog(개) = 핫도그!' },
+
+    /* ---- 동물·자연 ---- */
+    { t: '동물', q: '문어의 심장은 몇 개일까요?', c: ['1개', '2개', '3개', '4개'], a: 2,
+      why: '문어는 심장이 3개예요. 아가미로 피를 보내는 심장 2개, 온몸으로 보내는 심장 1개가 있어요.' },
+    { t: '동물', q: '기린의 목뼈는 사람과 몇 개나 같을까요?', c: ['똑같이 7개', '사람보다 훨씬 많다', '3개뿐', '뼈가 없다'], a: 0,
+      why: '기린도 목뼈가 사람과 똑같이 7개예요. 하나하나가 아주 길 뿐이에요!' },
+    { t: '동물', q: '달리는 힘이 가장 센 육상 동물은?', c: ['치타', '사자', '말', '타조'], a: 0,
+      why: '치타는 시속 100km가 넘게 달릴 수 있어요.' },
+    { t: '동물', q: '지구에서 가장 큰 동물은?', c: ['대왕고래', '아프리카코끼리', '기린', '코뿔소'], a: 0,
+      why: '대왕고래는 몸길이가 30m 가까이 되는, 지구 역사상 가장 큰 동물이에요.' },
+    { t: '동물', q: '뒤로도 날 수 있는 새는?', c: ['벌새', '참새', '독수리', '비둘기'], a: 0,
+      why: '벌새는 날개를 아주 빠르게 움직여 뒤로도 날 수 있는 유일한 새예요.' },
+    { t: '동물', q: '박쥐는 어떤 동물의 친척일까요?', c: ['포유류', '새', '파충류', '물고기'], a: 0,
+      why: '박쥐는 새처럼 날지만 젖을 먹여 새끼를 키우는 포유류예요.' },
+    { t: '동물', q: '거미의 다리는 몇 개일까요?', c: ['6개', '8개', '10개', '4개'], a: 1,
+      why: '거미는 다리가 8개예요. 곤충은 6개라서 거미는 곤충이 아니에요.' },
+    { t: '동물', q: '곤충의 다리는 몇 개일까요?', c: ['6개', '8개', '4개', '10개'], a: 0,
+      why: '곤충은 다리가 6개예요. 그래서 거미는 곤충이 아니에요.' },
+    { t: '동물', q: '날지 못하는 가장 큰 새는?', c: ['타조', '독수리', '참새', '까치'], a: 0,
+      why: '타조는 가장 큰 새지만 날지는 못해요. 대신 아주 빨리 달려요.' },
+    { t: '동물', q: '낙타의 혹 속에 가득 든 것은?', c: ['지방', '물', '모래', '공기'], a: 0,
+      why: '혹 속에는 지방이 가득 있어서, 먹이를 못 먹을 때 에너지로 써요.' },
+    { t: '자연', q: '대나무는 나무일까요, 풀일까요?', c: ['풀', '나무', '꽃', '덩굴'], a: 0,
+      why: "대나무는 벼과에 속하는 '풀'이에요. 나무처럼 단단하지만 풀이랍니다." },
+    { t: '자연', q: '나무의 나이테를 세면 무엇을 알 수 있을까요?', c: ['나무의 나이', '나무의 키', '잎의 수', '뿌리의 길이'], a: 0,
+      why: '나무는 1년에 한 겹씩 자라서, 나이테를 세면 나이를 알 수 있어요.' },
+    { t: '동물', q: '뇌가 없는 바다 동물은?', c: ['해파리', '문어', '돌고래', '거북이'], a: 0,
+      why: '해파리는 뇌도 심장도 없어요. 그래도 촉수로 먹이를 잡아요.' },
+    { t: '동물', q: '펭귄이 사는 곳은 어디일까요?', c: ['남극 근처', '북극', '사막', '열대 우림'], a: 0,
+      why: '펭귄은 남쪽(남극 근처), 북극곰은 북쪽(북극)에 살아서 둘은 만날 수 없어요.' },
+    { t: '동물', q: '다람쥐가 겨울을 나려고 모으는 것은?', c: ['도토리', '눈덩이', '나뭇잎', '돌멩이'], a: 0,
+      why: '다람쥐는 가을에 도토리를 모아 두고 겨울에 꺼내 먹어요.' },
+    { t: '동물', q: '물고기는 무엇으로 숨을 쉴까요?', c: ['아가미', '허파', '코', '날개'], a: 0,
+      why: '물고기는 아가미로 물속의 산소를 받아들여요.' },
+    { t: '동물', q: '개구리는 겨울에 무엇을 할까요?', c: ['겨울잠을 잔다', '이사를 간다', '알을 낳는다', '날아간다'], a: 0,
+      why: '개구리는 추운 겨울을 겨울잠으로 나요.' },
+    { t: '동물', q: '꿀벌이 꽃에서 모으는 것은?', c: ['꿀과 꽃가루', '나뭇잎', '씨앗', '이슬'], a: 0,
+      why: '꿀벌은 꽃의 꿀과 꽃가루를 모아요. 꽃가루를 옮겨 주는 고마운 일도 해요.' },
+    { t: '동물', q: '개가 땀을 흘리는 곳은 어디일까요?', c: ['발바닥', '코', '귀', '꼬리'], a: 0,
+      why: '개는 발바닥의 땀샘으로 열을 내보내고, 더우면 혀를 내밀고 헐떡여요.' },
+    { t: '동물', q: '고양이 수염은 무엇에 쓰일까요?', c: ['균형 잡기와 공간 확인', '냄새 맡기', '소리 듣기', '온도 재기'], a: 0,
+      why: '고양이 수염은 몸이 지나갈 수 있는 곳인지 확인하고 균형을 잡는 데 써요.' },
+
+    /* ---- 우주·과학 ---- */
+    { t: '우주', q: '태양계에서 가장 큰 행성은?', c: ['목성', '지구', '토성', '화성'], a: 0,
+      why: '목성은 지구가 1300개쯤 들어갈 만큼 커요.' },
+    { t: '우주', q: '태양에서 가장 가까운 행성은?', c: ['수성', '금성', '지구', '화성'], a: 0,
+      why: '태양에서 가까운 순서는 수성 → 금성 → 지구 → 화성 이에요.' },
+    { t: '우주', q: '지구의 위성은 몇 개일까요?', c: ['1개', '2개', '3개', '없다'], a: 0,
+      why: '지구의 위성은 달 하나예요.' },
+    { t: '우주', q: '태양은 무엇일까요?', c: ['별', '행성', '위성', '구름'], a: 0,
+      why: '태양은 스스로 빛을 내는 별이에요. 낮에 보이는 가장 가까운 별이죠.' },
+    { t: '우주', q: '지구가 태양을 한 바퀴 도는 데 걸리는 시간은?', c: ['1년', '1달', '하루', '10년'], a: 0,
+      why: '지구가 태양 둘레를 한 바퀴 도는 데 1년이 걸려요.' },
+    { t: '우주', q: '우주에서 소리는 어떻게 들릴까요?', c: ['들리지 않는다', '아주 크게 들린다', '작게 들린다', '메아리로 들린다'], a: 0,
+      why: '소리는 공기 같은 것을 타고 퍼지는데, 우주에는 공기가 거의 없어요.' },
+    { t: '과학', q: '물이 어는 온도는 몇 도일까요?', c: ['0도', '10도', '100도', '-10도'], a: 0,
+      why: '물은 0도에서 얼고, 100도에서 끓어요.' },
+    { t: '과학', q: '1기압에서 물이 끓는 온도는?', c: ['100도', '50도', '200도', '0도'], a: 0,
+      why: '보통 1기압에서 물은 100도에서 끓어요.' },
+    { t: '우리 몸', q: '피를 온몸으로 보내는 곳은?', c: ['심장', '폐', '위', '간'], a: 0,
+      why: '심장은 펌프처럼 피를 온몸으로 보내요.' },
+    { t: '우리 몸', q: '숨을 쉬게 해 주는 기관은?', c: ['폐', '심장', '뼈', '근육'], a: 0,
+      why: '폐가 공기 속 산소를 받아들이고 이산화탄소를 내보내요.' },
+    { t: '지구', q: '지구에서 가장 큰 바다는?', c: ['태평양', '대서양', '인도양', '북극해'], a: 0,
+      why: '태평양은 지구 바다의 절반 가까이를 차지할 만큼 넓어요.' },
+    { t: '우리 몸', q: '우리 몸에서 가장 큰 기관은?', c: ['피부', '뼈', '심장', '뇌'], a: 0,
+      why: '피부는 우리 몸을 온통 덮고 있는 가장 큰 기관이에요.' },
+    { t: '지구', q: '지구를 둘러싸고 있는 공기를 뭐라고 할까요?', c: ['대기', '우주', '구름', '바람'], a: 0,
+      why: '지구를 둘러싼 공기층을 대기라고 해요.' },
+    { t: '지구', q: '지구의 공기 중 가장 많은 기체는?', c: ['질소', '산소', '이산화탄소', '수소'], a: 0,
+      why: '질소가 약 78%, 산소가 약 21% 들어 있어요.' },
+
+    /* ---- 음식·생활 ---- */
+    { t: '음식', q: '김치의 주재료는 무엇일까요?', c: ['배추', '사과', '감자', '옥수수'], a: 0,
+      why: '김치는 배추를 소금에 절여 양념을 버무려 만든 우리나라 음식이에요.' },
+    { t: '음식', q: '초콜릿의 원료는?', c: ['카카오', '커피', '우유', '보리'], a: 0,
+      why: '카카오 열매로 초콜릿을 만들어요.' },
+    { t: '음식', q: '빵을 부풀게 하는 것은?', c: ['이스트', '소금', '설탕', '식초'], a: 0,
+      why: '이스트(효모)가 반죽 속에서 기체를 만들어 빵을 부풀려요.' },
+    { t: '음식', q: '우유로 만든 음식이 아닌 것은?', c: ['김치', '치즈', '요거트', '버터'], a: 0,
+      why: '치즈·요거트·버터는 우유로 만들고, 김치는 배추로 담가요.' },
+    { t: '음식', q: '꿀은 누가 만들까요?', c: ['꿀벌', '개미', '나비', '잠자리'], a: 0,
+      why: '꿀벌이 꽃에서 모은 꿀을 벌집에 저장해요.' },
+    { t: '과학', q: '아이스크림이 녹는 까닭은?', c: ['열을 받아서', '물이 들어서', '달아서', '차가워서'], a: 0,
+      why: '따뜻한 열을 받으면 아이스크림이 녹아요.' },
+    { t: '음식', q: '쌀로 만든 음식이 아닌 것은?', c: ['빵', '떡', '밥', '죽'], a: 0,
+      why: '빵은 주로 밀가루로 만들어요. 떡·밥·죽은 쌀로 만들어요.' },
+    { t: '음식', q: '우리나라 음식의 매운맛을 내는 양념은?', c: ['고춧가루', '설탕', '소금', '후추'], a: 0,
+      why: '고춧가루가 우리 음식의 매운맛을 만들어요.' },
+
+    /* ---- 역사·지리 ---- */
+    { t: '역사·지리', q: '우리나라의 수도는 어디일까요?', c: ['서울', '부산', '인천', '대전'], a: 0,
+      why: '대한민국의 수도는 서울이에요.' },
+    { t: '역사·지리', q: '우리나라에서 가장 큰 섬은?', c: ['제주도', '울릉도', '강화도', '거제도'], a: 0,
+      why: '제주도가 우리나라에서 가장 큰 섬이에요.' },
+    { t: '역사·지리', q: '대한민국에서 가장 높은 산은?', c: ['한라산', '지리산', '설악산', '태백산'], a: 0,
+      why: '한라산은 약 1947m로 대한민국에서 가장 높은 산이에요.' },
+    { t: '역사', q: '한글을 만든 왕은?', c: ['세종대왕', '태조 이성계', '정조', '광개토대왕'], a: 0,
+      why: '세종대왕이 백성이 쉽게 글을 읽도록 훈민정음(한글)을 만들었어요.' },
+    { t: '역사', q: '거북선을 만든 장군은?', c: ['이순신', '김유신', '강감찬', '을지문덕'], a: 0,
+      why: '이순신 장군이 거북선을 만들어 왜군과 싸웠어요.' },
+    { t: '역사·지리', q: '우리나라의 국화는?', c: ['무궁화', '진달래', '개나리', '벚꽃'], a: 0,
+      why: '무궁화는 우리나라를 상징하는 꽃이에요.' },
+    { t: '역사', q: '광복절은 몇 월 며칠일까요?', c: ['8월 15일', '3월 1일', '10월 3일', '6월 6일'], a: 0,
+      why: '8월 15일은 나라를 되찾은 광복절이에요.' },
+    { t: '역사·지리', q: '대한민국에서 가장 긴 강은?', c: ['낙동강', '한강', '금강', '섬진강'], a: 0,
+      why: '남한에서는 낙동강(약 513km)이 가장 길어요. 한반도 전체로는 압록강이 가장 길어요.' },
+    { t: '역사', q: '신라의 수도였던 곳은?', c: ['경주', '서울', '부여', '공주'], a: 0,
+      why: '신라의 수도는 경주였어요. 지금도 경주에 옛 유적이 많이 남아 있어요.' },
+    { t: '역사', q: '조선을 세운 사람은?', c: ['이성계', '왕건', '이순신', '세종대왕'], a: 0,
+      why: '이성계가 조선을 세우고 태조가 되었어요.' },
+    { t: '역사', q: '3·1 운동이 일어난 해는?', c: ['1919년', '1945년', '1950년', '1905년'], a: 0,
+      why: '1919년 3월 1일, 우리나라 사람들이 만세를 외치며 독립을 외쳤어요.' },
+    { t: '역사', q: '태극기 가운데에 있는 무늬는?', c: ['태극', '무궁화', '별', '용'], a: 0,
+      why: '태극기 가운데에는 빨강과 파랑이 어우러진 태극 무늬가 있어요.' },
+    { t: '역사', q: '삼국을 통일한 나라는?', c: ['신라', '백제', '고구려', '고려'], a: 0,
+      why: '신라가 백제와 고구려를 아우르며 삼국을 통일했어요.' },
+    { t: '역사·지리', q: '제주도에서 가장 높은 산은?', c: ['한라산', '지리산', '설악산', '소백산'], a: 0,
+      why: '한라산은 제주도 한가운데 우뚝 솟은 화산이에요.' },
+    { t: '역사·지리', q: '우리나라 화폐의 단위는?', c: ['원', '엔', '달러', '위안'], a: 0,
+      why: '우리나라 돈의 단위는 원이에요.' }
+  ];
+
+  /* =========================================================
+     상태
+     ========================================================= */
+  var state = 'home';
+  var TOTAL = 10;
+  var TIME_LIMIT = 15;
+
+  var Q = {
+    mode: 'solo',
+    list: [],
+    i: 0,
+    remaining: TIME_LIMIT,
+    locked: false,
+    marks: [],
+    bestStreak: 0,
+    players: [
+      { name: '미소', emoji: '👧', score: 0, right: 0, streak: 0, best: 0, marks: [] },
+      { name: '아빠', emoji: '👨', score: 0, right: 0, streak: 0, best: 0, marks: [] }
+    ],
+    turn: 0,
+    cur: null,
+    curChoices: []
+  };
+
+  var BEST_KEY = 'miso-quiz-best-v1';
+
+  function $(id) { return document.getElementById(id); }
+  function clamp(v, a, b) { return v < a ? a : (v > b ? b : v); }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = (Math.random() * (i + 1)) | 0;
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  /* =========================================================
+     소리
+     ========================================================= */
+  var AC = null, master = null, muted = false;
+
+  function audioInit() {
+    try {
+      if (!AC) {
+        var Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        AC = new Ctx();
+        master = AC.createGain();
+        master.gain.value = muted ? 0.0001 : 0.3;
+        master.connect(AC.destination);
+      }
+      if (AC.state === 'suspended' && AC.resume) AC.resume();
+    } catch (e) { AC = null; }
+  }
+
+  function note(freq, delay, dur, type, vol, slideTo) {
+    if (!AC || muted) return;
+    try {
+      var t0 = AC.currentTime + (delay || 0);
+      var o = AC.createOscillator(), g = AC.createGain();
+      o.type = type || 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(Math.max(40, slideTo), t0 + dur);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(Math.max(0.0003, vol || 0.16), t0 + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(master);
+      o.start(t0); o.stop(t0 + dur + 0.04);
+    } catch (e) {}
+  }
+
+  function sTap() { note(720, 0, 0.06, 'sine', 0.1); }
+  function sRight() {
+    note(784, 0, 0.14, 'triangle', 0.16);
+    note(988, 0.09, 0.16, 'triangle', 0.15);
+    note(1319, 0.19, 0.3, 'sine', 0.16);
+    note(392, 0, 0.1, 'sine', 0.07);
+  }
+  function sWrong() {
+    note(220, 0, 0.22, 'sawtooth', 0.09, 150);
+    note(165, 0.1, 0.28, 'square', 0.06, 110);
+  }
+  function sTick() { note(1400, 0, 0.05, 'sine', 0.06); }
+  function sFanfare() {
+    var seq = [[523, 0], [659, 0.1], [784, 0.2], [1046, 0.3], [988, 0.46], [1046, 0.56], [1318, 0.66]];
+    for (var i = 0; i < seq.length; i++) note(seq[i][0], seq[i][1], 0.24, 'triangle', 0.15);
+    note(523, 0.82, 0.6, 'triangle', 0.1);
+    note(659, 0.82, 0.6, 'triangle', 0.09);
+    note(784, 0.82, 0.6, 'triangle', 0.09);
+  }
+  function sLoser() {
+    var seq = [[440, 0], [392, 0.14], [330, 0.28], [262, 0.42]];
+    for (var i = 0; i < seq.length; i++) note(seq[i][0], seq[i][1], 0.28, 'triangle', 0.12);
+  }
+
+  /* =========================================================
+     배경 연출 (꽃가루)
+     ========================================================= */
+  var fx = document.getElementById('fx');
+  var fxc = fx.getContext('2d');
+  var FW = 390, FH = 844, FDPR = 1;
+  var confetti = [];
+  var fxOn = false;
+
+  function fxFit() {
+    var r = fx.getBoundingClientRect();
+    FW = Math.max(200, Math.round(r.width) || 390);
+    FH = Math.max(300, Math.round(r.height) || 844);
+    FDPR = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+    fx.width = Math.round(FW * FDPR);
+    fx.height = Math.round(FH * FDPR);
+    fxc.setTransform(FDPR, 0, 0, FDPR, 0, 0);
+  }
+
+  function burst(n, x, y) {
+    var colors = ['#ff6d92', '#ffd166', '#63d0f5', '#a88bff', '#7bd88f', '#ff9f43', '#ffffff'];
+    for (var i = 0; i < n; i++) {
+      var ang = rand(0, 6.28), sp = rand(80, 380);
+      confetti.push({
+        x: x + rand(-20, 20), y: y + rand(-10, 10),
+        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - rand(60, 220),
+        w: rand(5, 10), h: rand(7, 14), rot: rand(0, 6.28), spin: rand(-8, 8),
+        color: colors[(Math.random() * colors.length) | 0], life: 0, max: rand(1.6, 2.8),
+        round: Math.random() < 0.35
+      });
+    }
+    if (!fxOn) { fxOn = true; requestAnimationFrame(fxLoop); }
+  }
+
+  var lastFx = 0;
+  function fxLoop(now) {
+    if (!lastFx) lastFx = now;
+    var dt = Math.min(0.05, (now - lastFx) / 1000);
+    lastFx = now;
+    fxc.setTransform(FDPR, 0, 0, FDPR, 0, 0);
+    fxc.clearRect(0, 0, FW, FH);
+    for (var i = confetti.length - 1; i >= 0; i--) {
+      var c = confetti[i];
+      c.life += dt;
+      if (c.life >= c.max || c.y > FH + 40) { confetti.splice(i, 1); continue; }
+      c.vy += 260 * dt;
+      c.vx += Math.sin(c.life * 3 + c.rot) * 20 * dt;
+      c.x += c.vx * dt;
+      c.y += c.vy * dt;
+      c.rot += c.spin * dt;
+      fxc.save();
+      fxc.translate(c.x, c.y);
+      fxc.rotate(c.rot);
+      fxc.globalAlpha = c.life > c.max - 0.5 ? Math.max(0, (c.max - c.life) / 0.5) : 1;
+      fxc.fillStyle = c.color;
+      if (c.round) {
+        fxc.beginPath(); fxc.arc(0, 0, c.w / 2, 0, 6.29); fxc.fill();
+      } else {
+        fxc.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+      }
+      fxc.restore();
+    }
+    fxc.globalAlpha = 1;
+    if (confetti.length) {
+      requestAnimationFrame(fxLoop);
+    } else {
+      fxOn = false;
+      fxc.clearRect(0, 0, FW, FH);
+      lastFx = 0;
+    }
+  }
+
+  /* =========================================================
+     화면 전환
+     ========================================================= */
+  var SCREENS = ['home', 'vsSetup', 'quiz', 'result'];
+  function show(id) {
+    state = id;
+    for (var i = 0; i < SCREENS.length; i++) {
+      var el = $(SCREENS[i]);
+      if (SCREENS[i] === id) el.classList.add('show');
+      else el.classList.remove('show');
+    }
+    var mute = document.querySelector('.mute-wrap');
+    if (mute) mute.style.display = 'flex';
+  }
+
+  /* =========================================================
+     홈
+     ========================================================= */
+  function loadBest() {
+    try {
+      var raw = localStorage.getItem(BEST_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || typeof o.score !== 'number') return null;
+      return o;
+    } catch (e) { return null; }
+  }
+  function renderBest() {
+    var b = loadBest();
+    var el = $('bestLine');
+    if (!b) {
+      el.textContent = '아직 기록이 없어요. 첫 도전해 볼까요?';
+    } else {
+      el.innerHTML = '내 최고 점수 <b>' + b.score + '점</b> · ' + b.right + '문제 정답';
+    }
+  }
+  function saveBest(score, right) {
+    var b = loadBest();
+    if (!b || score > b.score) {
+      try { localStorage.setItem(BEST_KEY, JSON.stringify({ score: score, right: right })); } catch (e) {}
+    }
+  }
+
+  /* =========================================================
+     게임 시작
+     ========================================================= */
+  function startSolo() {
+    audioInit();
+    Q.mode = 'solo';
+    Q.list = shuffle(BANK.slice()).slice(0, TOTAL);
+    Q.i = 0;
+    Q.marks = [];
+    Q.bestStreak = 0;
+    Q.players[0].score = 0; Q.players[0].right = 0; Q.players[0].streak = 0; Q.players[0].best = 0;
+    Q.players[0].name = '미소'; Q.players[0].emoji = '👧';
+    Q.turn = 0;
+    $('qScore').textContent = '0';
+    $('turnBanner').hidden = true;
+    $('turnLabel').textContent = '혼자 도전';
+    $('streakPill').hidden = true;
+    $('dots').innerHTML = '';
+    show('quiz');
+    showQuestion();
+  }
+
+  function startDuel() {
+    audioInit();
+    var a = ($('nameA').value || '미소').trim().slice(0, 8) || '미소';
+    var b = ($('nameB').value || '아빠').trim().slice(0, 8) || '아빠';
+    var ea = $('avA').textContent || '👧';
+    var eb = $('avB').textContent || '👨';
+    Q.mode = 'duel';
+    Q.list = shuffle(BANK.slice()).slice(0, TOTAL);
+    Q.i = 0;
+    Q.marks = [];
+    Q.turn = 0;
+    Q.players[0] = { name: a, emoji: ea, score: 0, right: 0, streak: 0, best: 0, marks: [] };
+    Q.players[1] = { name: b, emoji: eb, score: 0, right: 0, streak: 0, best: 0, marks: [] };
+    $('turnBanner').hidden = false;
+    $('streakPill').hidden = false;
+    $('dots').innerHTML = '';
+    show('quiz');
+    showQuestion();
+  }
+
+  function activePlayer() {
+    return Q.mode === 'duel' ? Q.players[Q.i % 2] : Q.players[0];
+  }
+
+  function showQuestion() {
+    var q = Q.list[Q.i];
+    Q.cur = q;
+    Q.locked = false;
+    Q.remaining = TIME_LIMIT;
+
+    var p = activePlayer();
+    $('qNo').textContent = Q.i + 1;
+    $('qScore').textContent = p.score;
+    $('qStreak').textContent = p.streak;
+    $('qTag').textContent = q.t;
+    $('qText').textContent = q.q;
+
+    if (Q.mode === 'duel') {
+      $('turnBanner').hidden = false;
+      $('turnBanner').textContent = p.emoji + ' ' + p.name + ' 차례!';
+      $('turnBanner').className = 'turn' + (Q.i % 2 === 1 ? ' b' : '');
+      $('turnLabel').textContent = p.emoji + ' ' + p.name;
+    } else {
+      $('turnBanner').hidden = true;
+      $('turnLabel').textContent = '혼자 도전';
+    }
+
+    // 보기 섞기
+    var arr = q.c.map(function (text, idx) { return { text: text, ok: idx === q.a }; });
+    shuffle(arr);
+    Q.curChoices = arr;
+
+    var wrap = $('choices');
+    wrap.innerHTML = '';
+    var keys = ['A', 'B', 'C', 'D'];
+    for (var i = 0; i < arr.length; i++) {
+      var b2 = document.createElement('button');
+      b2.type = 'button';
+      b2.className = 'choice';
+      b2.setAttribute('data-i', String(i));
+      b2.innerHTML = '<span class="k">' + keys[i] + '</span><span class="tx">' + escapeHtml(arr[i].text) + '</span>';
+      (function (idx) {
+        b2.addEventListener('click', function () { choose(idx); });
+      })(i);
+      wrap.appendChild(b2);
+    }
+
+    // 점 표시
+    var dots = $('dots');
+    dots.innerHTML = '';
+    for (var d = 0; d < TOTAL; d++) {
+      var it = document.createElement('i');
+      var mk = Q.marks[d];
+      if (mk === true) it.className = 'ok';
+      else if (mk === false) it.className = 'no';
+      else if (d === Q.i) it.className = 'now';
+      dots.appendChild(it);
+    }
+
+    $('hostBubble').textContent = (Q.mode === 'duel')
+      ? p.name + ' 차례야! 15초 안에 골라 봐!'
+      : (Q.i === 0 ? '자, 시작해 볼까? 15초 안에 골라 봐!' : '이번 문제도 맞힐 수 있어!');
+    $('fb').classList.remove('show');
+    $('quiz').classList.remove('fb-open');
+    updateTimerUI();
+  }
+
+  function updateTimerUI() {
+    var pct = clamp(Q.remaining / TIME_LIMIT, 0, 1);
+    $('timerFill').style.width = (pct * 100).toFixed(1) + '%';
+    $('timerTxt').textContent = Math.max(0, Math.ceil(Q.remaining)) + '초';
+    var bar = $('timerBar');
+    if (Q.remaining <= 5) bar.classList.add('low');
+    else bar.classList.remove('low');
+  }
+
+  var lastWhole = TIME_LIMIT;
+
+  function choose(idx) {
+    if (Q.locked || state !== 'quiz') return;
+    answer(idx);
+  }
+
+  function answer(idx) {
+    Q.locked = true;
+    var q = Q.cur;
+    var p = activePlayer();
+    var ok = idx != null && Q.curChoices[idx] && Q.curChoices[idx].ok;
+
+    // 보기 표시
+    var nodes = $('choices').children;
+    for (var i = 0; i < nodes.length; i++) {
+      var isRight = Q.curChoices[i].ok;
+      nodes[i].disabled = true;
+      if (isRight) nodes[i].classList.add('right');
+      else if (i === idx) nodes[i].classList.add('wrong');
+      else nodes[i].classList.add('dim');
+    }
+
+    var gained = 0;
+    if (ok) {
+      p.streak++;
+      if (p.streak > p.best) p.best = p.streak;
+      if (Q.mode === 'solo' && p.streak > Q.bestStreak) Q.bestStreak = p.streak;
+      var timeBonus = Math.round(Math.max(0, Q.remaining) * 6);
+      var streakBonus = p.streak >= 2 ? Math.min(90, 30 * (p.streak - 1)) : 0;
+      gained = 100 + timeBonus + streakBonus;
+      p.score += gained;
+      p.right++;
+      sRight();
+      burst(38, FW / 2, FH * 0.46);
+    } else {
+      p.streak = 0;
+      sWrong();
+    }
+    Q.marks[Q.i] = !!ok;
+
+    $('qScore').textContent = p.score;
+    $('qStreak').textContent = p.streak;
+
+    // 피드백
+    $('fbCard').className = 'fbcard ' + (ok ? 'ok' : 'no');
+    $('fbEmoji').textContent = ok ? (p.streak >= 3 ? '🔥' : '🎉') : '😊';
+    $('fbTitle').textContent = ok
+      ? (p.streak >= 3 ? '연속 ' + p.streak + '문제 정답!' : '딩동댕! 정답이야')
+      : (idx == null ? '시간 초과!' : '아쉬워요!');
+    $('fbAns').innerHTML = '정답은 <b>' + escapeHtml(q.c[q.a]) + '</b>' +
+      (ok ? '' : ' · 다음엔 맞힐 수 있어!');
+    $('fbWhy').textContent = q.why;
+    $('fbNext').textContent = (Q.i + 1 >= TOTAL) ? '결과 보기 ▶' : '다음 문제 ▶';
+    $('hostBubble').textContent = ok
+      ? ['정답이야! 최고야!', '딩동댕! 잘했어!', '정확해! 멋지다!'][(Math.random() * 3) | 0]
+      : '괜찮아, 설명을 읽고 다음 문제에서 맞히자!';
+
+    // 점 갱신
+    var dots = $('dots').children;
+    if (dots[Q.i]) dots[Q.i].className = ok ? 'ok' : 'no';
+
+    $('fb').classList.add('show');
+    $('quiz').classList.add('fb-open');
+  }
+
+  function nextQuestion() {
+    $('fb').classList.remove('show');
+    $('quiz').classList.remove('fb-open');
+    Q.i++;
+    if (Q.i >= TOTAL) {
+      setTimeout(finish, 180);
+      return;
+    }
+    showQuestion();
+  }
+
+  /* =========================================================
+     결과
+     ========================================================= */
+  function finish() {
+    var total = 0;
+    for (var i = 0; i < Q.marks.length; i++) if (Q.marks[i]) total++;
+    show('result');
+
+    if (Q.mode === 'solo') {
+      var p = Q.players[0];
+      var stars = p.right >= 10 ? 3 : (p.right >= 8 ? 2 : (p.right >= 6 ? 1 : 0));
+      $('duelStats').hidden = true;
+      $('soloStats').hidden = false;
+      $('rEmoji').textContent = stars === 3 ? '🏆' : (stars === 2 ? '🥳' : (stars === 1 ? '😊' : '🌱'));
+      $('rTitle').innerHTML = stars === 3 ? '완벽해, <span>퀴즈 왕!</span>'
+        : (stars === 2 ? '아주 <span>잘했어요!</span>'
+        : (stars === 1 ? '좋아요, <span>조금만 더!</span>' : '다시 <span>도전해 볼까?</span>'));
+      $('rSub').textContent = '10문제 중 ' + p.right + '문제를 맞혔어요';
+      $('rScore').textContent = p.score;
+      $('rRight').textContent = p.right + ' / 10';
+      $('rStreak').textContent = Q.bestStreak + '연속';
+      var starHtml = '';
+      for (var s = 0; s < 3; s++) starHtml += '<span class="' + (s < stars ? '' : 'off') + '">⭐</span>';
+      $('rStars').innerHTML = starHtml;
+      if (stars === 3) { burst(110, FW / 2, FH * 0.06); setTimeout(function(){ burst(60, FW * 0.12, FH * 0.04); burst(60, FW * 0.88, FH * 0.04); }, 220); sFanfare(); }
+      else if (stars >= 1) { burst(70, FW / 2, FH * 0.06); sFanfare(); }
+      else sLoser();
+      saveBest(p.score, p.right);
+    } else {
+      var a = Q.players[0], b = Q.players[1];
+      $('duelStats').hidden = false;
+      $('soloStats').hidden = true;
+      $('rStars').innerHTML = '';
+      $('rEmoji').textContent = '🏆';
+      var winner = a.score === b.score ? null : (a.score > b.score ? a : b);
+      if (winner) {
+        $('rTitle').innerHTML = '<span>' + escapeHtml(winner.name) + '</span> 우승!';
+        $('rSub').textContent = a.name + ' ' + a.score + '점 · ' + b.name + ' ' + b.score + '점';
+        burst(120, FW / 2, FH * 0.05);
+        sFanfare();
+      } else {
+        $('rTitle').innerHTML = '무승부! <span>둘 다 최고!</span>';
+        $('rSub').textContent = a.name + ' ' + a.score + '점 · ' + b.name + ' ' + b.score + '점';
+        burst(80, FW / 2, FH * 0.05);
+        sFanfare();
+      }
+      $('dwA').textContent = a.emoji + ' ' + a.name;
+      $('dwB').textContent = b.emoji + ' ' + b.name;
+      $('dsA').textContent = a.score;
+      $('dsB').textContent = b.score;
+      var max = Math.max(a.score, b.score, 1);
+      $('dbA').style.width = (a.score / max * 100) + '%';
+      $('dbB').style.width = (b.score / max * 100) + '%';
+      $('duelA').className = 'duelrow' + (winner === a ? ' win' : '');
+      $('duelB').className = 'duelrow b' + (winner === b ? ' win' : '');
+    }
+    renderBest();
+  }
+
+  /* =========================================================
+     타이머 루프
+     ========================================================= */
+  var last = 0;
+  function loop(now) {
+    if (!last) last = now;
+    var dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+
+    if (state === 'quiz' && !Q.locked) {
+      Q.remaining -= dt;
+      updateTimerUI();
+      var whole = Math.ceil(Q.remaining);
+      if (whole !== lastWhole) {
+        lastWhole = whole;
+        if (whole <= 3 && whole > 0) sTick();
+      }
+      if (Q.remaining <= 0) {
+        Q.remaining = 0;
+        answer(null);
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  /* =========================================================
+     입력 / 초기화
+     ========================================================= */
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (m) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+    });
+  }
+
+  var muteBtn = $('muteBtn');
+  muteBtn.addEventListener('click', function () {
+    muted = !muted;
+    audioInit();
+    if (master) { try { master.gain.value = muted ? 0.0001 : 0.3; } catch (e) {} }
+    $('icoOn').hidden = muted;
+    $('icoOff').hidden = !muted;
+    muteBtn.setAttribute('aria-label', muted ? '소리 켜기' : '소리 끄기');
+    if (!muted) sTap();
+  });
+
+  $('soloBtn').addEventListener('click', function () { sTap(); startSolo(); });
+  $('duelBtn').addEventListener('click', function () {
+    sTap();
+    show('vsSetup');
+  });
+  $('vsBack').addEventListener('click', function () { sTap(); show('home'); });
+  $('vsStart').addEventListener('click', function () { sTap(); startDuel(); });
+  $('fbNext').addEventListener('click', function () { sTap(); nextQuestion(); });
+  $('againBtn').addEventListener('click', function () {
+    sTap();
+    if (Q.mode === 'duel') startDuel();
+    else startSolo();
+  });
+  $('homeBtn2').addEventListener('click', function () {
+    sTap();
+    renderBest();
+    show('home');
+  });
+
+  // 대결 이름 칩
+  function buildChips(el, targets, avatarEl, inputEl) {
+    el.innerHTML = '';
+    targets.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'qchip';
+      b.textContent = t.emoji + ' ' + t.name;
+      b.addEventListener('click', function () {
+        avatarEl.textContent = t.emoji;
+        inputEl.value = t.name;
+        var all = el.children;
+        for (var k = 0; k < all.length; k++) all[k].classList.remove('on');
+        b.classList.add('on');
+        sTap();
+      });
+      el.appendChild(b);
+    });
+  }
+  buildChips($('chipsA'), [
+    { emoji: '👧', name: '미소' }, { emoji: '👦', name: '미르' }, { emoji: '👨', name: '아빠' }, { emoji: '👩', name: '엄마' }
+  ], $('avA'), $('nameA'));
+  buildChips($('chipsB'), [
+    { emoji: '👨', name: '아빠' }, { emoji: '👩', name: '엄마' }, { emoji: '👧', name: '미소' }, { emoji: '👦', name: '미르' }
+  ], $('avB'), $('nameB'));
+  $('chipsA').children[0].classList.add('on');
+  $('chipsB').children[0].classList.add('on');
+
+  window.addEventListener('resize', function () { fxFit(); });
+  window.addEventListener('orientationchange', function () { setTimeout(fxFit, 120); });
+  document.addEventListener('pointerdown', audioInit);
+
+  fxFit();
+  renderBest();
+  requestAnimationFrame(loop);
+
+  /* 테스트용 훅 (?test=1) */
+  if (/[?&]test=1/.test(location.search)) {
+    window.__misoQuiz = {
+      get state() { return state; },
+      get mode() { return Q.mode; },
+      qText: function () { return ($('qNo').textContent + '/' + TOTAL) + ' ' + $('qText').textContent; },
+      progress: function () { return (Q.i + 1) + '/' + TOTAL; },
+      score: function () { return activePlayer().score; },
+      marks: function () { return Q.marks.slice(); },
+      solo: startSolo,
+      duel: startDuel,
+      answerCorrect: function () {
+        for (var i = 0; i < Q.curChoices.length; i++) if (Q.curChoices[i].ok) { answer(i); return true; }
+        return false;
+      },
+      answerWrong: function () {
+        for (var i = 0; i < Q.curChoices.length; i++) if (!Q.curChoices[i].ok) { answer(i); return true; }
+        return false;
+      },
+      tick: function (sec) { Q.remaining = sec; updateTimerUI(); },
+      next: nextQuestion,
+      finishFast: function () {
+        var guard = 0;
+        while (Q.i < TOTAL && guard++ < 40) {
+          if (!Q.locked) {
+            for (var i = 0; i < Q.curChoices.length; i++) {
+              if (Q.curChoices[i].ok) { answer(i); break; }
+            }
+          }
+          nextQuestion();
+        }
+        return Q.i;
+      },
+      bankSize: BANK.length,
+      fbVisible: function () { return $('fb').classList.contains('show'); }
+    };
+  }
+})();
+</script>
+</body>
+</html>
