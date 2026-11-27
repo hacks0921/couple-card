@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>🟦 통통 튀는 네모 미소르 점프 | 미소르의 게임</title>
-<meta name="description" content="하늘색 네모 친구 미소르와 함께 구름을 밟고 하늘 끝까지 올라가는 점프 게임. 가족 최고 기록에 도전해 봐!">
+<title>🟦 통통 튀는 얼굴 점프 — 아빠·미소 | 미소르의 게임</title>
+<meta name="description" content="아빠·미소 얼굴이 통통 튀는 점프 게임. 구름을 밟고 하늘 끝까지 올라가며 가족 최고 기록에 도전해 봐!">
 <meta name="theme-color" content="#e6f7ff">
-<meta property="og:title" content="🟦 통통 튀는 네모 미소르 점프">
-<meta property="og:description" content="구름을 밟고 하늘 끝까지 통통통! 가족 최고 기록에 도전해 봐.">
+<meta property="og:title" content="🟦 통통 튀는 얼굴 점프 — 아빠·미소">
+<meta property="og:description" content="구름을 밟고 하늘 끝까지 통통통! 아빠·미소 얼굴로 변신해서 가족 최고 기록에 도전해 봐.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23d9f3ff'/%3E%3Crect x='24' y='24' width='52' height='52' rx='14' fill='%2357c3ea'/%3E%3Ccircle cx='42' cy='48' r='4' fill='%23fff'/%3E%3Ccircle cx='58' cy='48' r='4' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -52,8 +52,10 @@
   .icon-btn svg{width:20px;height:20px;display:block}
   #playerTag{
     font-size:11.5px;font-weight:800;color:#2d86ad;background:rgba(255,255,255,.86);
-    border:2px solid #cdeeff;border-radius:999px;padding:6px 11px 7px;white-space:nowrap;
+    border:2px solid #cdeeff;border-radius:999px;padding:5px 10px 6px;white-space:nowrap;
+    display:flex;align-items:center;gap:4px;min-width:0;max-width:132px;overflow:hidden;
   }
+  #playerTag span{overflow:hidden;text-overflow:ellipsis}
 
   /* ---------- screens ---------- */
   .screen{
@@ -84,8 +86,11 @@
     background:linear-gradient(180deg,transparent 60%,#c7efff 60%,#c7efff 94%,transparent 94%);
     padding:0 .05em;
   }
-  h1 .mini{display:inline-block;width:34px;height:34px;vertical-align:-5px;margin-right:2px}
+  h1 .mini{display:inline-block;position:relative;width:48px;height:34px;vertical-align:-5px;margin-right:6px}
   h1 .mini svg{width:100%;height:100%;display:block}
+  h1 .mini img{position:absolute;top:0;width:30px;height:30px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(40,90,120,.25))}
+  h1 .mini img:first-child{left:0;transform:rotate(-8deg)}
+  h1 .mini img:last-child{left:17px;top:2px;transform:rotate(6deg)}
   .lead{margin:12px 0 0;font-size:13.5px;line-height:1.6;font-weight:700;color:#5e849b}
   .pick-label{margin:14px 0 7px;font-size:11.5px;font-weight:900;color:#8fb0c2;letter-spacing:.04em}
   .chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
@@ -96,6 +101,12 @@
   }
   .chip:active{transform:scale(.95)}
   .chip.on{background:#e3f7ff;border-color:#5cc8f2;color:#1177a3;box-shadow:0 5px 16px rgba(60,180,230,.25);transform:translateY(-1px)}
+  .chip img{width:22px;height:22px;object-fit:contain;vertical-align:-7px;margin-right:3px;filter:drop-shadow(0 1px 2px rgba(40,90,120,.22))}
+  .chip .duo{display:inline-block;position:relative;width:28px;height:22px;vertical-align:-7px;margin-right:3px}
+  .chip .duo img{position:absolute;top:0;width:19px;height:19px;margin:0}
+  .chip .duo img:last-child{left:8px;top:2px}
+  .board-list li img.av{width:20px;height:20px;object-fit:contain;flex:0 0 20px}
+  #playerTag img{width:20px;height:20px;object-fit:contain;vertical-align:-5px;margin-right:2px}
   .btn{
     font-family:inherit;border:none;cursor:pointer;font-weight:900;letter-spacing:-.02em;
     border-radius:999px;transition:transform .09s,filter .15s;
@@ -138,6 +149,11 @@
   #over.show .over-card{transform:scale(1)}
   .over-emoji{font-size:40px;line-height:1;animation:floaty 2.4s ease-in-out infinite}
   @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .over-faces{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:74px;margin-bottom:2px}
+  .over-faces img{height:70px;width:auto;filter:drop-shadow(0 6px 10px rgba(40,90,120,.22));animation:dizzy 2.6s ease-in-out infinite}
+  .over-faces img:nth-child(2){height:60px;animation-delay:.25s}
+  @keyframes dizzy{0%,100%{transform:rotate(-9deg) translateY(0)}50%{transform:rotate(9deg) translateY(-5px)}}
+  .over-said{margin:2px 0 0;font-size:12.5px;font-weight:900;color:#1177a3;background:#fff;border:2px solid #cdeeff;border-radius:999px;padding:5px 13px 6px;box-shadow:0 4px 12px rgba(70,140,180,.14)}
   .over-title{margin:6px 0 0;font-size:clamp(22px,6.4vw,27px);font-weight:900;letter-spacing:-.03em;color:#16384c}
   .over-title span{color:#1b8fc4}
   .stat-row{display:flex;gap:8px;margin:12px 0 0;width:100%;justify-content:center}
@@ -197,10 +213,10 @@
   <div id="title" class="screen show">
     <div class="title-inner">
       <div class="title-card">
-        <p class="eyebrow">미소르의 신나는 두 번째 게임</p>
-        <h1><span class="mini" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="3" y="3" width="42" height="42" rx="12" fill="#63cdf1"/><rect x="8" y="8" width="32" height="32" rx="8" fill="none" stroke="#ffffff" stroke-opacity=".7" stroke-width="3"/><circle cx="15" cy="24" r="3.6" fill="#1d4256"/><circle cx="33" cy="24" r="3.6" fill="#1d4256"/><circle cx="11.5" cy="16" r="4.4" fill="#ffb2cd"/><circle cx="36.5" cy="16" r="4.4" fill="#ffb2cd"/><path d="M18 31q6 5 12 0" fill="none" stroke="#1d4256" stroke-width="2.8" stroke-linecap="round"/></svg></span>통통 튀는<br><span class="hl">네모 미소르 점프</span></h1>
-        <p class="lead">좌우로 움직여 구름을 밟고<br>하늘 끝까지 통통통! 🚀</p>
-        <p class="pick-label">누가 할까요?</p>
+        <p class="eyebrow">😆 아빠·미소 얼굴로 변신!</p>
+        <h1><span class="mini" aria-hidden="true"><img src="faces/dad.png" alt=""><img src="faces/miso.png" alt=""></span>통통 튀는<br><span class="hl">우리 얼굴 점프</span></h1>
+        <p class="lead">우리 얼굴이 통통 튀는 점프!<br>구름을 밟고 하늘 끝까지 🚀</p>
+        <p class="pick-label">누구 얼굴로 뛸까요?</p>
         <div class="chips" id="chips"></div>
         <button id="startBtn" class="btn primary big" type="button">시작하기</button>
         <div class="board">
@@ -215,7 +231,9 @@
   <div id="over" class="screen">
     <div class="over-card">
       <div class="over-emoji">🫧</div>
-      <h2 class="over-title">앗, <span id="overName">미소</span>의 미소르가<br>내려왔어!</h2>
+      <div class="over-faces" id="overFaces" hidden></div>
+      <h2 class="over-title">앗, <span id="overName">미소</span>가<br>쿵 내려왔어!</h2>
+      <p class="over-said" id="overSaid">으악~ 그래도 잘했어!</p>
       <div class="stat-row">
         <div class="stat"><b id="fHeight">0</b><span>높이(m)</span></div>
         <div class="stat"><b id="fCoins">0</b><span>별 개수</span></div>
@@ -264,7 +282,7 @@
   var lastRocketY = -99999;
   var milestone = 0;
 
-  var char = { x: 195, y: 150, vx: 0, vy: 0, sq: 0, face: 1, blink: 2, blinkOn: 0, boost: 0, spin: 0 };
+    var char = { x: 195, y: 150, vx: 0, vy: 0, sq: 0, face: 1, blink: 2, blinkOn: 0, boost: 0, spin: 0, falling: false };
   var input = { drag: false, x: 0, dir: 0 };
   var auto = false;   // 테스트용 자동 조종
   var autoTarget = null;
@@ -279,11 +297,43 @@
   var run = { h: 0, coins: 0, best: 0, newBest: false };
 
   var PLAYERS = [
-    { key: 'miso', name: '미소', emoji: '👧' },
-    { key: 'mir', name: '미르', emoji: '👦' },
-    { key: 'dad', name: '아빠', emoji: '👨' },
-    { key: 'mom', name: '엄마', emoji: '👩' }
+    { key: 'miso', name: '미소', emoji: '👧', face: 'miso', chip: '미소',
+      lines: { spring: ['토끼 점프!', '히히!', '가즈아!', '미소 최고!'], rocket: ['우와 높다!'], fall: ['으악!'] } },
+    { key: 'dad', name: '아빠', emoji: '👨', face: 'dad', chip: '아빠',
+      lines: { spring: ['아빠 화이팅!', '가즈아!', '슝~', '아빠 최고!'], rocket: ['우와 높다!'], fall: ['으악!'] } },
+    { key: 'duo', name: '미소&아빠', emoji: '👧👨', face: 'duo', chip: '둘이 같이',
+      lines: { spring: ['둘이 같이!', '가즈아!', '슝슝~'], rocket: ['우와 높다!'], fall: ['으악~!'] } },
+    { key: 'misor', name: '미소르', emoji: '🟦', face: null, chip: '미소르',
+      lines: { spring: ['미소르 점프!', '가즈아!'], rocket: ['우와 높다!'], fall: ['으악!'] } }
   ];
+  var FACE_SRC = { miso: 'faces/miso.png', dad: 'faces/dad.png' };
+  var FACE_IMG = {};
+  function preloadFaces() {
+    for (var k in FACE_SRC) {
+      (function (key) {
+        var im = new Image();
+        im.decoding = 'async';
+        im.src = FACE_SRC[key];
+        FACE_IMG[key] = im;
+      })(k);
+    }
+  }
+  function faceReady(k) {
+    var im = k === 'duo' ? FACE_IMG.miso : FACE_IMG[k];
+    return !!(im && im.complete && im.naturalWidth > 0);
+  }
+  function chipHtml(p) {
+    if (p.face === 'duo') {
+      return '<span class="duo" aria-hidden="true"><img src="faces/dad.png" alt=""><img src="faces/miso.png" alt=""></span>' + p.chip;
+    }
+    if (p.face) return '<img src="faces/' + p.face + '.png" alt="">' + p.chip;
+    return '<span aria-hidden="true">🟦</span> ' + p.chip;
+  }
+  function tagHtml(p) {
+    if (p.face === 'duo') return '<img src="faces/dad.png" alt=""><img src="faces/miso.png" alt=""><span>둘이</span>';
+    if (p.face) return '<img src="faces/' + p.face + '.png" alt=""><span>' + p.name + '</span>';
+    return '<span>🟦 ' + p.name + '</span>';
+  }
   var LB_KEY = 'misor-jump-lb-v1';
   var P_KEY = 'misor-jump-player-v1';
   var player = PLAYERS[0];
@@ -476,8 +526,11 @@
       var e = list[i];
       var li = document.createElement('li');
       if (highlightId && e.id === highlightId) li.className = 'me';
-      li.innerHTML = '<span class="rk">' + medals[i] + '</span>' +
-        '<span class="nm">' + (e.e || '🙂') + ' ' + escapeHtml(e.n || '') + '</span>' +
+      var av = (e.f && FACE_SRC[e.f])
+        ? '<img class="av" src="' + FACE_SRC[e.f] + '" alt="">'
+        : '<span aria-hidden="true">' + (e.e || '🙂') + '</span>';
+      li.innerHTML = '<span class="rk">' + medals[i] + '</span>' + av +
+        '<span class="nm">' + escapeHtml(e.n || '') + '</span>' +
         '<span class="sc">' + e.s + 'm</span>';
       el.appendChild(li);
     }
@@ -495,18 +548,26 @@
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'chip' + (p.key === player.key ? ' on' : '');
-      b.textContent = p.emoji + ' ' + p.name;
+      b.innerHTML = chipHtml(p);
       b.setAttribute('aria-pressed', p.key === player.key ? 'true' : 'false');
+      b.setAttribute('aria-label', p.name + ' 얼굴로 하기');
       b.addEventListener('click', function () {
         audioInit();
-        player = p;
-        try { localStorage.setItem(P_KEY, p.key); } catch (e) {}
-        buildChips();
-        $('#playerTag').textContent = p.emoji + ' ' + p.name;
-        sCoin();
+        choosePlayer(p);
       });
       wrap.appendChild(b);
     });
+  }
+
+  function choosePlayer(p) {
+    player = p;
+    try { localStorage.setItem(P_KEY, p.key); } catch (e) {}
+    buildChips();
+    $('#playerTag').innerHTML = tagHtml(p);
+    char.falling = false;
+    if (p.face === 'duo') say('미소&아빠 출동!', 1200);
+    else if (p.face) say(p.chip + ' 등장!', 1100);
+    sCoin();
   }
 
   /* =========================================================
@@ -530,7 +591,8 @@
     run.h = 0; run.coins = 0; run.newBest = false;
 
     char.x = W / 2; char.y = 160; char.vx = 0; char.vy = 0;
-    char.sq = 0; char.boost = 0; char.spin = 0;
+    char.sq = 0; char.boost = 0; char.spin = 0; char.falling = false;
+    bubble.life = 0;
     autoTarget = null;
     input.drag = false; input.dir = 0;
 
@@ -550,7 +612,13 @@
     resetRun();
     setState('play');
     sBounce();
-    toast(player.emoji + ' ' + player.name + ', 출발!', 1500);
+    say(pick(['가즈아!', '출발!', '슝~']), 1100);
+    toast(tagText(player) + ', 출발!', 1500);
+  }
+
+  function tagText(p) {
+    if (p.face === 'duo') return '👧👨 미소&아빠';
+    return p.emoji + ' ' + p.name;
   }
 
   function setState(s) {
@@ -579,12 +647,28 @@
     run.h = h;
     var entry = {
       id: 'r' + Date.now() + Math.random().toString(36).slice(2, 6),
-      n: player.name, e: player.emoji, s: h, c: run.coins
+      n: player.name, e: player.emoji, f: player.face === 'duo' ? null : player.face, s: h, c: run.coins
     };
     var inTop = addRecord(entry);
     run.newBest = inTop && h > prevBest && h > 0;
 
-    $('#overName').textContent = player.name;
+    $('#overName').textContent = player.name.replace('&', ' & ');
+    var em = document.querySelector('.over-emoji');
+    if (em) em.hidden = !!player.face;
+    var of = $('#overFaces');
+    of.innerHTML = '';
+    if (player.face === 'duo') {
+      of.innerHTML = '<img src="faces/dad.png" alt="아빠"><img src="faces/miso.png" alt="미소">';
+      of.hidden = false;
+    } else if (player.face) {
+      of.innerHTML = '<img src="faces/' + player.face + '.png" alt="' + escapeHtml(player.name) + '">';
+      of.hidden = false;
+    } else {
+      of.hidden = true;
+    }
+    $('#overSaid').textContent = run.newBest
+      ? '와우! 신기록이야 ✨'
+      : pick(['으악~ 괜찮아!', '한 번 더 해보자!', '다음엔 더 높이!', '아쉽다, 한 번 더?']);
     $('#fHeight').textContent = h;
     $('#fCoins').textContent = run.coins;
     var nb = playerBest(player.name);
@@ -602,11 +686,14 @@
 
   function goHome() {
     $('#over').classList.remove('show');
+    $('#title').classList.add('show');
     setState('title');
     resetRun();
     char.x = W / 2;
     char.y = H * 0.52;
+    bubble.life = 0;
     renderBoard($('#boardList'));
+    syncHud(true);
   }
 
   /* =========================================================
@@ -674,6 +761,7 @@
      ========================================================= */
   function update(dt) {
     t += dt;
+    if (bubble.life > 0) bubble.life -= dt;
 
     if (char.blinkOn > 0) char.blinkOn -= dt;
     char.blink -= dt;
@@ -723,6 +811,7 @@
         if (m >= milestone + 500) {
           milestone = Math.floor(m / 500) * 500;
           toast(milestone + 'm 돌파! 🎉', 1500);
+          say('우와 높다!', 1400);
           sBest();
         }
       }
@@ -730,6 +819,10 @@
       syncHud();
 
       // 낙하
+      if (char.vy < -260 && char.y - cam < 120 && !char.falling) {
+        char.falling = true;
+        say(pick(player.lines.fall), 1400);
+      }
       if (char.y < cam - 120) gameOver();
     }
 
@@ -768,6 +861,8 @@
         sRocket();
         puff(char.x, char.y, 16, ['#ffd166', '#ff9f43', '#ffffff'], 190);
         toast('🚀 로켓! 하늘로 슝~', 1500);
+        say(pick(player.lines.rocket), 1500);
+        char.falling = false;
       } else if (it.y < cam - 120) {
         items.splice(k, 1);
       }
@@ -825,12 +920,14 @@
 
       char.y = p.y;
       char.sq = 1;
+      char.falling = false;
       if (auto) autoTarget = autoPick(p.y);
       if (p.spring) {
         char.vy = SPRINGV;
         p.springT = 0.3;
         sSpring();
         puff(px, p.y, 10, ['#ffffff', '#ffe9a8'], 130);
+        say(pick(player.lines.spring), 1200);
       } else if (p.type === 'jelly') {
         p.broken = true;
         p.breakT = 0;
@@ -1160,7 +1257,7 @@
     ctx.restore();
   }
 
-  function drawChar(x, bottomY, sq, face, blink, mood) {
+  function drawSquareChar(x, bottomY, sq, face, blink, mood) {
     var bob = 0;
     var stretch = 1;
     if (mood === 'title') bob = Math.sin(t * 2) * 4;
@@ -1247,6 +1344,142 @@
     ctx.restore();
   }
 
+  /* =========================================================
+     얼굴 스티커 캐릭터
+     ========================================================= */
+  function drawStickerOnce(im, w, h, rot, dx, dy) {
+    ctx.save();
+    ctx.translate(dx || 0, dy || 0);
+    if (rot) ctx.rotate(rot);
+    ctx.drawImage(im, -w / 2, -h / 2, w, h);
+    ctx.restore();
+  }
+
+  function drawFaceChar(x, bottomY, sq, face, blink, mood) {
+    var w = 70, h = 74;
+    var stretch = char.boost > 0 ? 1.09 : 1;
+    var rot = 0;
+    if (mood === 'play') {
+      rot = clamp(char.vx / 2400, -0.22, 0.22);
+      if (char.boost > 0) rot += Math.sin(t * 15) * 0.06;
+      if (char.falling) rot = Math.sin(t * 8.5) * 0.5;
+    } else {
+      rot = Math.sin(t * 1.7) * 0.06;
+    }
+    var bob = mood === 'title' ? Math.sin(t * 2) * 4 : 0;
+    var sx = (1 + 0.15 * sq) / stretch;
+    var sy = (1 - 0.17 * sq) * stretch;
+
+    ctx.save();
+    ctx.translate(x, bottomY - h * 0.5 + bob);
+    ctx.rotate(rot);
+    ctx.scale(sx, sy);
+
+    // 그림자
+    ctx.fillStyle = 'rgba(30,80,110,0.10)';
+    ctx.beginPath();
+    ctx.ellipse(0, h * 0.54, w * 0.28, 4.2, 0, 0, 6.29);
+    ctx.fill();
+
+    // 다리
+    var swing = mood === 'play' ? clamp(-char.vy / 2400, -1, 1) * 5 : Math.sin(t * 3) * 3;
+    ctx.strokeStyle = '#79c6e8';
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-w * 0.17, h * 0.40); ctx.lineTo(-w * 0.17 + swing, h * 0.55); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w * 0.17, h * 0.40); ctx.lineTo(w * 0.17 + swing, h * 0.55); ctx.stroke();
+
+    // 팔
+    var arm = mood === 'play' ? (-0.15 + clamp(char.vy / 1100, -1, 1) * 0.75) : Math.sin(t * 2.3) * 0.35;
+    [1, -1].forEach(function (s) {
+      ctx.save();
+      ctx.translate(s * w * 0.40, h * 0.06);
+      ctx.rotate(s * arm);
+      ctx.strokeStyle = '#79c6e8';
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(s * 7, 8, s * 9, 17);
+      ctx.stroke();
+      ctx.fillStyle = '#a9e2f7';
+      ctx.beginPath(); ctx.arc(s * 9, 17, 4, 0, 6.29); ctx.fill();
+      ctx.restore();
+    });
+
+    // 얼굴 스티커
+    if (player.face === 'duo') {
+      if (faceReady('dad')) drawStickerOnce(FACE_IMG.dad, w * 0.74, h * 0.74, -0.13, -w * 0.22, -h * 0.04);
+      if (faceReady('miso')) drawStickerOnce(FACE_IMG.miso, w * 0.70, h * 0.70, 0.09, w * 0.17, h * 0.06);
+    } else if (player.face && faceReady(player.face)) {
+      ctx.drawImage(FACE_IMG[player.face], -w / 2, -h / 2, w, h);
+    }
+
+    ctx.restore();
+
+    // 로켓 별 반짝임
+    if (char.boost > 0 && Math.random() < 0.6) {
+      parts.push({
+        x: x + rand(-30, 30), y: char.y + rand(-10, 40),
+        vx: rand(-60, 60), vy: rand(40, 160), r: rand(2, 4),
+        life: 0, max: rand(0.2, 0.45), color: pick(['#fff6c4', '#ffd166', '#ffffff'])
+      });
+    }
+  }
+
+  function drawChar(x, bottomY, sq, face, blink, mood) {
+    if (player.face && faceReady(player.face)) drawFaceChar(x, bottomY, sq, face, blink, mood);
+    else drawSquareChar(x, bottomY, sq, face, blink, mood);
+  }
+
+  /* =========================================================
+     말풍선
+     ========================================================= */
+  var bubble = { text: '', life: 0, max: 1 };
+  function say(text, ms) {
+    if (!text) return;
+    bubble.text = text;
+    bubble.max = (ms || 1400) / 1000;
+    bubble.life = bubble.max;
+  }
+
+  function drawBubble(cx, cy, text, pop, fade) {
+    ctx.save();
+    ctx.globalAlpha = fade;
+    ctx.font = '900 14px Pretendard, "Apple SD Gothic Neo", sans-serif';
+    var tw = ctx.measureText(text).width;
+    var bw = Math.min(W - 16, tw + 24), bh = 30;
+    var x = clamp(cx - bw / 2, 8, W - bw - 8);
+    var y = cy - bh;
+    var baseX = clamp(cx, x + 16, x + bw - 16);
+    ctx.translate(baseX, y + bh);
+    ctx.scale(pop, pop);
+    ctx.translate(-baseX, -(y + bh));
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#8fd6f2';
+    ctx.lineWidth = 2.4;
+    // 꼬리
+    ctx.beginPath();
+    ctx.moveTo(baseX - 7, y + bh - 1);
+    ctx.lineTo(baseX, y + bh + 9);
+    ctx.lineTo(baseX + 7, y + bh - 1);
+    ctx.closePath();
+    ctx.fill();
+    // 몸통
+    roundRect(ctx, x, y, bw, bh, 15);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, x + 2, y + bh - 5, bw - 4, 6, 3);
+    ctx.fill();
+
+    ctx.fillStyle = '#12384f';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, x + bw / 2, y + bh / 2 + 1);
+    ctx.restore();
+  }
+
   function render() {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, W, H);
@@ -1273,9 +1506,12 @@
     if (state === 'title') {
       drawChar(W / 2, H * 0.93, 0, 1, char.blinkOn > 0, 'title');
       // 이름표
+      var label = player.chip || player.name;
+      ctx.font = '800 13px Pretendard, "Apple SD Gothic Neo", sans-serif';
+      var lw = Math.max(72, ctx.measureText(label).width + 26);
       var ty = H * 0.93 + 14;
       ctx.fillStyle = 'rgba(255,255,255,0.95)';
-      roundRect(ctx, W / 2 - 36, ty, 72, 26, 13);
+      roundRect(ctx, W / 2 - lw / 2, ty, lw, 26, 13);
       ctx.fill();
       ctx.strokeStyle = '#cfeafd';
       ctx.lineWidth = 2;
@@ -1283,14 +1519,20 @@
       ctx.fillStyle = '#1b8fc4';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = '800 13px Pretendard, "Apple SD Gothic Neo", sans-serif';
-      ctx.fillText('미소르', W / 2, ty + 14);
+      ctx.fillText(label, W / 2, ty + 14);
     } else {
       var sy = H - (char.y - cam);
       var drawX = char.x;
       drawChar(drawX, sy, char.sq, char.face, char.blinkOn > 0, 'play');
       if (char.x < 70) drawChar(char.x + W, sy, char.sq, char.face, char.blinkOn > 0, 'play');
       if (char.x > W - 70) drawChar(char.x - W, sy, char.sq, char.face, char.blinkOn > 0, 'play');
+
+      if (bubble.life > 0) {
+        var elapsed = bubble.max - bubble.life;
+        var pop = elapsed < 0.13 ? 0.55 + 0.45 * (elapsed / 0.13) : 1;
+        var fade = bubble.life < 0.28 ? bubble.life / 0.28 : 1;
+        drawBubble(drawX, sy - 76, bubble.text, pop, fade);
+      }
     }
   }
 
@@ -1372,7 +1614,8 @@
     var pk = localStorage.getItem(P_KEY);
     for (var pi = 0; pi < PLAYERS.length; pi++) if (PLAYERS[pi].key === pk) player = PLAYERS[pi];
   } catch (e) {}
-  $('#playerTag').textContent = player.emoji + ' ' + player.name;
+  $('#playerTag').innerHTML = tagHtml(player);
+  preloadFaces();
   buildChips();
   renderBoard($('#boardList'));
   fit();
@@ -1415,11 +1658,14 @@
         char.y = best.y; char.x = best.x; char.vx = 0; char.vy = 0;
         return true;
       },
-      drop: function () { char.y = cam - 200; char.vy = -600; },
+      drop: function () { char.y = cam - 60; char.vy = -600; char.falling = true; say(pick(player.lines.fall), 1200); },
+      get camY() { return cam; },
+      setY: function (y, vy) { char.y = y; char.vy = vy || 0; },
+      bubble: function () { return { text: bubble.text, life: Math.round(bubble.life * 1000) / 1000 }; },
+      say: function (txt, ms) { say(txt, ms); },
       popupVisible: function () { return $('#over').classList.contains('show'); },
       choosePlayer: function (key) {
-        for (var i = 0; i < PLAYERS.length; i++) if (PLAYERS[i].key === key) player = PLAYERS[i];
-        buildChips();
+        for (var i = 0; i < PLAYERS.length; i++) if (PLAYERS[i].key === key) choosePlayer(PLAYERS[i]);
       },
       lb: loadLB
     };
